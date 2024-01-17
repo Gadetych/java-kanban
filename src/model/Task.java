@@ -1,17 +1,25 @@
 package model;
 
-public abstract class AbstractTask {
+public class Task {
     private String title;
     private String description;
     private int id;
-    private TaskStatus taskStatus;
+    private TaskStatus status;
 
-    public AbstractTask(String title, String description, int id, TaskStatus taskStatus) {
+
+    public Task(String title, String description) {
         this.title = title;
         this.description = description;
-        this.id = id;
-        this.taskStatus = taskStatus;
+        status = TaskStatus.NEW;
     }
+//
+////    !?
+//    public Task(String title, String description, TaskStatus taskStatus) {
+//        this.title = title;
+//        this.description = description;
+//        this.id = ++counter;
+//        this.status = taskStatus;
+//    }
 
     public String getTitle() {
         return title;
@@ -37,12 +45,12 @@ public abstract class AbstractTask {
         this.id = id;
     }
 
-    public TaskStatus getTaskStatus() {
-        return taskStatus;
+    public TaskStatus getStatus() {
+        return status;
     }
 
-    public void setTaskStatus(TaskStatus taskStatus) {
-        this.taskStatus = taskStatus;
+    public void setStatus(TaskStatus status) {
+        this.status = status;
     }
 
     @Override
@@ -54,7 +62,7 @@ public abstract class AbstractTask {
     public boolean equals(Object obj) {
         if (this == obj) return true;
         if (obj == null || this.getClass() != obj.getClass()) return false;
-        AbstractTask task = (AbstractTask) obj;
+        Task task = (Task) obj;
         return this.getId() == task.getId();
     }
 }
