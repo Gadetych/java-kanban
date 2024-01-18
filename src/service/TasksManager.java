@@ -121,10 +121,6 @@ public class TasksManager {
         if (subtask != null) {
             subtasks.put(subtask.getId(), subtask);
         }
-        /*Subtask originalSubtask = subtasks.get(subtask.getId());
-        originalSubtask.setTitle(subtask.getTitle());
-        originalSubtask.setDescription(subtask.getDescription());
-        originalSubtask.setStatus(subtask.getStatus());*/
         return subtask;
     }
 
