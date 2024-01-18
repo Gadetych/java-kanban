@@ -19,10 +19,11 @@ public class TasksManager {
         this.epicTasks = new HashMap<>();
     }
 
-    public int generateId() {
+    private int generateId() {
         return ++counter;
     }
 
+    //Task
     public HashMap<Integer, Task> getTasks() {
         return tasks;
     }
@@ -42,11 +43,10 @@ public class TasksManager {
     }
 
     public Task updateTask(Task task) {
-        Task originalTask = tasks.get(task.getId());
-        originalTask.setTitle(task.getTitle());
-        originalTask.setDescription(task.getDescription());
-        originalTask.setStatus(task.getStatus());
-        return originalTask;
+        if (task != null) {
+            tasks.put(task.getId(), task);
+        }
+        return task;
     }
 
     public Task removeTask(Integer id) {
@@ -54,13 +54,13 @@ public class TasksManager {
     }
 
     //    Epic
-
     public HashMap<Integer, Epic> getEpicTasks() {
         return epicTasks;
     }
 
     public HashMap<Integer, Subtask> getEpicSubtasks(Integer id) {
-        return epicTasks.get(id).getSubtasks();
+        Epic epic = epicTasks.get(id);
+        return epic == null ? null : epic.getSubtasks();
     }
 
     public void clearEpicTasks() {
@@ -79,11 +79,14 @@ public class TasksManager {
     }
 
     public Epic updateEpicTask(Epic epicTask) {
-        Epic originalEpicTask = epicTasks.get(epicTask.getId());
-        originalEpicTask.setTitle(epicTask.getTitle());
-        originalEpicTask.setDescription(epicTask.getDescription());
-        originalEpicTask.setSubtasks(epicTask.getSubtasks());
-        originalEpicTask.updateStatus();
+        Epic originalEpicTask = null;
+        if (epicTask != null) {
+            originalEpicTask = epicTasks.get(epicTask.getId());
+            originalEpicTask.setTitle(epicTask.getTitle());
+            originalEpicTask.setDescription(epicTask.getDescription());
+            originalEpicTask.setSubtasks(epicTask.getSubtasks());
+            originalEpicTask.updateStatus();
+        }
         return originalEpicTask;
     }
     
@@ -115,11 +118,14 @@ public class TasksManager {
     }
 
     public Subtask updateSubtask(Subtask subtask) {
-        Subtask originalSubtask = subtasks.get(subtask.getId());
+        if (subtask != null) {
+            subtasks.put(subtask.getId(), subtask);
+        }
+        /*Subtask originalSubtask = subtasks.get(subtask.getId());
         originalSubtask.setTitle(subtask.getTitle());
         originalSubtask.setDescription(subtask.getDescription());
-        originalSubtask.setStatus(subtask.getStatus());
-        return originalSubtask;
+        originalSubtask.setStatus(subtask.getStatus());*/
+        return subtask;
     }
 
     public Subtask removeSubtask(Integer id) {

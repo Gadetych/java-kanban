@@ -12,14 +12,7 @@ public class Task {
         this.description = description;
         status = TaskStatus.NEW;
     }
-//
-////    !?
-//    public Task(String title, String description, TaskStatus taskStatus) {
-//        this.title = title;
-//        this.description = description;
-//        this.id = ++counter;
-//        this.status = taskStatus;
-//    }
+
 
     public String getTitle() {
         return title;
@@ -64,5 +57,11 @@ public class Task {
         if (obj == null || this.getClass() != obj.getClass()) return false;
         Task task = (Task) obj;
         return this.getId() == task.getId();
+    }
+
+    @Override
+    public String toString() {
+        String result = this.getClass() + "[title=" + title + ", description=" + description + ", status=" + status + ", id=" + id + '\'';
+        return result;
     }
 }
