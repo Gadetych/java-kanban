@@ -3,8 +3,11 @@ package service;
 import model.Epic;
 import model.Subtask;
 import model.Task;
+import model.TaskStatus;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class TasksManager {
     private HashMap<Integer, Task> tasks;
@@ -58,9 +61,16 @@ public class TasksManager {
         return epicTasks;
     }
 
-    public HashMap<Integer, Subtask> getEpicSubtasks(Integer id) {
+    public List<Subtask> getEpicSubtasks(Integer id) {
         Epic epic = epicTasks.get(id);
-        return epic == null ? null : epic.getSubtasks();
+        List<Subtask> subtaskList = null;
+        if ( epic != null) {
+            subtaskList = new ArrayList<>();
+            for (Integer i : epic.getSubtasks()) {
+                subtaskList.add(subtasks.get(i));
+            }
+        }
+        return subtaskList;
     }
 
     public void clearEpicTasks() {
@@ -85,13 +95,37 @@ public class TasksManager {
             originalEpicTask.setTitle(epicTask.getTitle());
             originalEpicTask.setDescription(epicTask.getDescription());
             originalEpicTask.setSubtasks(epicTask.getSubtasks());
-            originalEpicTask.updateStatus();
+            updateEpicStatus(originalEpicTask);
         }
         return originalEpicTask;
     }
     
     public Epic removeEpicTask(Integer id) {
         return epicTasks.remove(id);
+    }
+
+    private void updateEpicStatus(Epic epic) {
+        if (epic.getSubtasks() == null) {
+            epic.setStatus(TaskStatus.NEW);
+            return;
+        }
+        int counterNewStatus = 0;
+        int counterDoneStatus = 0;
+        for (Integer i : epic.getSubtasks()) {
+            Subtask subtask = subtasks.get(i);
+            if (subtask.getStatus() == TaskStatus.NEW) {
+                ++counterNewStatus;
+            } else if (subtask.getStatus() == TaskStatus.DONE) {
+                ++counterDoneStatus;
+            }
+        }
+        if (counterNewStatus == epic.getSubtasks().size()) {
+            epic.setStatus(TaskStatus.NEW);
+        } else if (counterDoneStatus == epic.getSubtasks().size()) {
+            epic.setStatus(TaskStatus.DONE);
+        } else {
+            epic.setStatus(TaskStatus.IN_PROGRESS);
+        }
     }
 
 
@@ -104,6 +138,7 @@ public class TasksManager {
         subtasks.clear();
     }
 
+//    !!!!!!
     public Subtask getSubtask(Integer id) {
         return subtasks.get(id);
     }
@@ -111,8 +146,8 @@ public class TasksManager {
     public Subtask createSubtask(Subtask subtask) {
         subtask.setId(generateId());
         subtasks.put(subtask.getId(), subtask);
-        Epic epic = subtask.getEpic();
-        epic.addSubtask(subtask.getId(), subtask);
+        Epic epic = epicTasks.get(subtask.getIdEpic());
+        epic.addSubtask(subtask.getId());
         updateEpicTask(epic);
         return subtask;
     }
