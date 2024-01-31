@@ -2,6 +2,7 @@ import model.Epic;
 import model.Subtask;
 import model.Task;
 import model.TaskStatus;
+import service.Managers;
 import service.TasksManager;
 
 public class Main {
@@ -17,7 +18,7 @@ public class Main {
         Subtask subtask2 = new Subtask("Подзадача2", "описание2", epic1.getId());
         Epic epic2 = new Epic("Эпик2", "описание2");
         Subtask subtask2_1 = new Subtask("Подзадача21", "описание21", epic2.getId());
-        TasksManager tasksManager = new TasksManager();
+        TasksManager tasksManager = Managers.getDefault();
         task1 = tasksManager.createTask(task1);
         task2 = tasksManager.createTask(task2);
         epic1 = tasksManager.createEpicTask(epic1);
