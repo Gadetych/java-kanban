@@ -8,7 +8,6 @@ public class Epic extends Task {
 
     public Epic(String title, String description) {
         super(title, description);
-
         this.subtasks = new ArrayList<>();
     }
 
@@ -20,9 +19,13 @@ public class Epic extends Task {
         this.subtasks = subtasks;
     }
 
-    public int addSubtask(int idSubtask) {
-        subtasks.add(idSubtask);
-        return idSubtask;
+    public boolean addSubtask(Task task) {
+        if (task instanceof Subtask) {
+            subtasks.add(task.getId());
+            return true;
+        }else {
+            return false;
+        }
     }
 
 }
