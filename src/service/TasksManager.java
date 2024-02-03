@@ -11,6 +11,8 @@ public interface TasksManager {
     //Task
     HashMap<Integer, Task> getTasks();
 
+    HistoryManager getHistoryManager();
+
     void clearTasks();
 
     Task getTask(Integer id);

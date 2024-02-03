@@ -19,13 +19,8 @@ public class Epic extends Task {
         this.subtasks = subtasks;
     }
 
-    public boolean addSubtask(Task task) {
-        if (task instanceof Subtask) {
-            subtasks.add(task.getId());
-            return true;
-        }else {
-            return false;
-        }
+    public boolean addSubtask(Subtask subtask) {
+        return subtasks.add(subtask.getId());
     }
 
 }

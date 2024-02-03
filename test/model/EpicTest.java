@@ -3,7 +3,8 @@ package model;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 class EpicTest {
     Epic epic1;
@@ -29,8 +30,4 @@ class EpicTest {
         assertNotEquals(epic1, epic2, "Задачи равны");
     }
 
-    @Test
-    void shouldNotBeAddedEpicToTheEpic() {
-        assertFalse(epic1.addSubtask(epic1), "Эпик не должен добавлять себя в подзадачи");
-    }
 }

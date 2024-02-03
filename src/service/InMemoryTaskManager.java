@@ -28,10 +28,16 @@ class InMemoryTaskManager implements TasksManager {
         return ++counter;
     }
 
+
     //Task
     @Override
     public HashMap<Integer, Task> getTasks() {
         return tasks;
+    }
+
+    @Override
+    public HistoryManager getHistoryManager() {
+        return historyManager;
     }
 
     @Override
