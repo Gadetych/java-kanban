@@ -2,6 +2,7 @@ package model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Epic extends Task {
     private List<Integer> subtasks;
@@ -20,6 +21,11 @@ public class Epic extends Task {
     }
 
     @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), subtasks);
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -28,8 +34,8 @@ public class Epic extends Task {
         return subtasks.equals(epic.subtasks);
     }
 
-    public boolean addSubtask(Subtask subtask) {
-        return subtasks.add(subtask.getId());
+    public void addSubtask(Subtask subtask) {
+        subtasks.add(subtask.getId());
     }
 
 }

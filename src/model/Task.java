@@ -1,5 +1,7 @@
 package model;
 
+import java.util.Objects;
+
 public class Task {
     private String title;
     private String description;
@@ -47,11 +49,6 @@ public class Task {
     }
 
     @Override
-    public int hashCode() {
-        return id*17;
-    }
-
-    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -60,8 +57,12 @@ public class Task {
     }
 
     @Override
+    public int hashCode() {
+        return Objects.hash(title, description, id, status);
+    }
+
+    @Override
     public String toString() {
-        String result = this.getClass() + "[title=" + title + ", description=" + description + ", status=" + status + ", id=" + id + '\'';
-        return result;
+        return this.getClass() + "[title=" + title + ", description=" + description + ", status=" + status + ", id=" + id + '\'';
     }
 }

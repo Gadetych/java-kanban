@@ -1,5 +1,7 @@
 package model;
 
+import java.util.Objects;
+
 public class Subtask extends Task {
     int idEpic;
     public Subtask(String title, String description, Epic epic) {
@@ -16,6 +18,10 @@ public class Subtask extends Task {
         return idEpic == subtask.idEpic;
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), idEpic);
+    }
 
     public int getIdEpic() {
         return idEpic;
