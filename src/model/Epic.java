@@ -19,6 +19,15 @@ public class Epic extends Task {
         this.subtasks = subtasks;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Epic epic = (Epic) o;
+        return subtasks.equals(epic.subtasks);
+    }
+
     public boolean addSubtask(Subtask subtask) {
         return subtasks.add(subtask.getId());
     }
