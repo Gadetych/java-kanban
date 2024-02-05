@@ -63,6 +63,6 @@ public class Task {
 
     @Override
     public String toString() {
-        return this.getClass() + "[title=" + title + ", description=" + description + ", status=" + status + ", id=" + id + '\'';
+        return this.getClass() + "{title=" + title + ", description=" + description + ", status=" + status + ", id=" + id + '}';
     }
 }

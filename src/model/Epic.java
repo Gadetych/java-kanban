@@ -5,24 +5,24 @@ import java.util.List;
 import java.util.Objects;
 
 public class Epic extends Task {
-    private List<Integer> subtasks;
+    private List<Integer> subtasksId;
 
     public Epic(String title, String description) {
         super(title, description);
-        this.subtasks = new ArrayList<>();
+        this.subtasksId = new ArrayList<>();
     }
 
-    public List<Integer> getSubtasks() {
-        return subtasks;
+    public List<Integer> getSubtasksId() {
+        return subtasksId;
     }
 
-    public void setSubtasks(List<Integer> subtasks) {
-        this.subtasks = subtasks;
+    public void setSubtasksId(List<Integer> subtasksId) {
+        this.subtasksId = subtasksId;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), subtasks);
+        return Objects.hash(super.hashCode(), subtasksId);
     }
 
     @Override
@@ -31,11 +31,17 @@ public class Epic extends Task {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         Epic epic = (Epic) o;
-        return subtasks.equals(epic.subtasks);
+        return subtasksId.equals(epic.subtasksId);
+    }
+
+    @Override
+    public String toString() {
+        return super.toString() +
+                ", subtasksId=" + subtasksId.toString();
     }
 
     public void addSubtask(Subtask subtask) {
-        subtasks.add(subtask.getId());
+        subtasksId.add(subtask.getId());
     }
 
 }
