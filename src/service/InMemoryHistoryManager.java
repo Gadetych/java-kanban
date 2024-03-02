@@ -50,11 +50,21 @@ class InMemoryHistoryManager implements HistoryManager {
     }
 
     private void removeNode(Node node) {
-        Node perv = node.prev;
-        Node next = node.next;
-        if (perv != null) perv.next = next;
+        if (node != null) {
+            Node perv = node.prev;
+            Node next = node.next;
+            if (perv != null) {
+                perv.next = next;
+            } else {
+                first = next;
+            }
 
-        if (next != null) next.prev = perv;
+            if (next != null) {
+                next.prev = perv;
+            } else {
+                last = perv;
+            }
+        }
     }
 
     @Override
