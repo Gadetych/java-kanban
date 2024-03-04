@@ -11,11 +11,11 @@ import java.util.List;
 import java.util.Map;
 
 class InMemoryTaskManager implements TasksManager {
-    private HashMap<Integer, Task> tasks;
-    private HashMap<Integer, Subtask> subtasks;
-    private HashMap<Integer, Epic> epicTasks;
+    private final Map<Integer, Task> tasks;
+    private final Map<Integer, Subtask> subtasks;
+    private final Map<Integer, Epic> epicTasks;
     private int counter = 0;
-    private HistoryManager historyManager;
+    private final HistoryManager historyManager;
 
 
     public InMemoryTaskManager(HistoryManager historyManager) {
@@ -49,7 +49,7 @@ class InMemoryTaskManager implements TasksManager {
     @Override
     public Task getTask(Integer id) {
         Task task = tasks.get(id);
-        historyManager.addTaskInHistory(task);
+        historyManager.add(task);
         return task;
     }
 
@@ -101,7 +101,7 @@ class InMemoryTaskManager implements TasksManager {
     @Override
     public Epic getEpicTask(Integer id) {
         Epic epic = epicTasks.get(id);
-        historyManager.addTaskInHistory(epic);
+        historyManager.add(epic);
         return epic;
     }
 
@@ -129,7 +129,7 @@ class InMemoryTaskManager implements TasksManager {
     public Epic removeEpicTask(Integer id) {
         Epic epic = getEpicTask(id);
         List<Integer> sub = epic.getSubtasksId();
-        for (Integer i : sub){
+        for (Integer i : sub) {
             subtasks.remove(i);
         }
         return epicTasks.remove(id);
@@ -174,7 +174,7 @@ class InMemoryTaskManager implements TasksManager {
     @Override
     public Subtask getSubtask(Integer id) {
         Subtask subtask = subtasks.get(id);
-        historyManager.addTaskInHistory(subtask);
+        historyManager.add(subtask);
         return subtask;
     }
 

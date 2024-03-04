@@ -24,7 +24,7 @@ class InMemoryHistoryManagerTest {
     void shouldHistoryManagerContain1Task() {
         Task task = new Task("title", "description");
         task.setId(1);
-        historyManager.addTaskInHistory(task);
+        historyManager.add(task);
         List<Task> actual = historyManager.getHistory();
         List<Task> expected = new ArrayList<>();
         expected.add(task);
@@ -40,9 +40,9 @@ class InMemoryHistoryManagerTest {
         Subtask subtask = new Subtask("title", "description", epic);
         subtask.setId(3);
         epic.addSubtask(subtask);
-        historyManager.addTaskInHistory(task);
-        historyManager.addTaskInHistory(epic);
-        historyManager.addTaskInHistory(subtask);
+        historyManager.add(task);
+        historyManager.add(epic);
+        historyManager.add(subtask);
         List<Task> actual = historyManager.getHistory();
         List<Task> expected = new ArrayList<>();
         expected.add(task);
@@ -51,8 +51,8 @@ class InMemoryHistoryManagerTest {
         assertEquals(expected, actual, "Менеджер историй должен содержать только 3 задачи");
     }
 
-    @Test
-    void shouldHistoryManagerContain10TaskAndChange1stTask() {
+    List<Task> getArrayList() {
+        List<Task> list = new ArrayList<>();
         Task task = new Task("title", "description");
         task.setId(1);
         Epic epic = new Epic("title", "description");
@@ -60,30 +60,54 @@ class InMemoryHistoryManagerTest {
         Subtask subtask = new Subtask("title", "description", epic);
         subtask.setId(3);
         epic.addSubtask(subtask);
-        historyManager.addTaskInHistory(task);
-        historyManager.addTaskInHistory(epic);
-        historyManager.addTaskInHistory(subtask);
-        historyManager.addTaskInHistory(epic);
-        historyManager.addTaskInHistory(epic);
-        historyManager.addTaskInHistory(task);
-        historyManager.addTaskInHistory(subtask);
-        historyManager.addTaskInHistory(subtask);
-        historyManager.addTaskInHistory(subtask);
-        historyManager.addTaskInHistory(subtask);
-        historyManager.addTaskInHistory(subtask);
-        List<Task> acrual = historyManager.getHistory();
-        List<Task> expected = new ArrayList<>();
-        expected.add(epic);
-        expected.add(subtask);
-        expected.add(epic);
-        expected.add(epic);
+        list.add(task);
+        list.add(epic);
+        list.add(subtask);
+        return list;
+    }
+
+    void addTasksInHitoryManager(List<Task> expected) {
+        historyManager.add(expected.get(0));
+        historyManager.add(expected.get(1));
+        historyManager.add(expected.get(2));
+    }
+
+    @Test
+    void shouldDeleteFirstAndAddTheTaskToTheEndOfTheHistory() {
+        List<Task> expected = getArrayList();
+        addTasksInHitoryManager(expected);
+        Task task = expected.get(0);
+        historyManager.add(task);
         expected.add(task);
+        expected.remove(0);
+        List<Task> actual = historyManager.getHistory();
+
+        assertEquals(expected, actual, "Не удалилась первая задача из истории или не добавилась в конец истории");
+    }
+
+    @Test
+    void shouldDeleteLastAndAddTheTaskToTheEndOfTheHistory() {
+        List<Task> expected = getArrayList();
+        addTasksInHitoryManager(expected);
+        Task subtask = expected.get(2);
+        historyManager.add(subtask);
         expected.add(subtask);
-        expected.add(subtask);
-        expected.add(subtask);
-        expected.add(subtask);
-        expected.add(subtask);
-        assertEquals(expected, acrual, "Менеджер историй должен содержать только 10 задач\n" +
-                "При добавлении 11й должен удалить самую раннюю задачу");
+        expected.remove(2);
+        List<Task> actual = historyManager.getHistory();
+
+        assertEquals(expected, actual, "Не удалилась последняя задача из истории или не добавилась в конец истории");
+    }
+
+    @Test
+    void shouldDeleteEpicFromTheMiddleAndAddTheEpicToTheEndOfTheHistory() {
+        List<Task> expected = getArrayList();
+        addTasksInHitoryManager(expected);
+        Task epic = expected.get(1);
+        historyManager.add(epic);
+        expected.add(epic);
+        expected.remove(1);
+        List<Task> actual = historyManager.getHistory();
+
+        assertEquals(expected, actual, "Не удалился Эпик из середины истории или не добавился в конец истории");
     }
 }

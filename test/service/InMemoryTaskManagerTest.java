@@ -151,6 +151,7 @@ class InMemoryTaskManagerTest {
         expectedTask.setId(id);
         return expectedTask;
     }
+
     @Test
     void shouldTasksManagerSaved1SubTask() {
         Map<Integer, Subtask> actual = tasksManager.getSubtasks();
@@ -196,7 +197,6 @@ class InMemoryTaskManagerTest {
 
         assertNull(itsNull, "Подзадача не удалена");
     }
-
 
 
 }
