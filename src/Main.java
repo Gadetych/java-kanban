@@ -22,11 +22,11 @@ public class Main {
         subtask2 = tasksManager.createSubtask(subtask2);
         Epic epic2 = new Epic("Эпик2", "описание2");
         epic2 = tasksManager.createEpicTask(epic2);
-        Subtask subtask2_1 = new Subtask("Подзадача21", "описание21", epic2);
-        subtask2_1 = tasksManager.createSubtask(subtask2_1);
+        Subtask subtask21 = new Subtask("Подзадача21", "описание21", epic2);
+        subtask21 = tasksManager.createSubtask(subtask21);
         epic1.addSubtask(subtask1);
         epic1.addSubtask(subtask2);
-        epic2.addSubtask(subtask2_1);
+        epic2.addSubtask(subtask21);
         tasksManager.updateEpicTask(epic1);
         tasksManager.updateEpicTask(epic2);
 
@@ -42,12 +42,12 @@ public class Main {
         task2.setStatus(TaskStatus.DONE);
         subtask1.setStatus(TaskStatus.DONE);
         subtask2.setStatus(TaskStatus.IN_PROGRESS);
-        subtask2_1.setStatus(TaskStatus.DONE);
+        subtask21.setStatus(TaskStatus.DONE);
         task1 = tasksManager.updateTask(task1);
         tasksManager.updateTask(task2);
         tasksManager.updateSubtask(subtask1);
         subtask2 = tasksManager.updateSubtask(subtask2);
-        tasksManager.updateSubtask(subtask2_1);
+        tasksManager.updateSubtask(subtask21);
         tasksManager.updateEpicTask(epic1);
         tasksManager.updateEpicTask(epic2);
 
