@@ -12,7 +12,7 @@ public class Main {
         Task task1 = new Task("Задача1", "описание1");
         Task task2 = new Task("Задача2", "описание2");
         Epic epic1 = new Epic("Эпик1", "описание1");
-        TasksManager tasksManager = Managers.getDefault();
+        TasksManager tasksManager = Managers.getDefaultFile();
         task1 = tasksManager.createTask(task1);
         task2 = tasksManager.createTask(task2);
         epic1 = tasksManager.createEpicTask(epic1);

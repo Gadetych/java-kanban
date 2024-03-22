@@ -3,9 +3,9 @@ package model;
 import java.util.Objects;
 
 public class Task {
+    private int id;
     private String title;
     private String description;
-    private int id;
     private TaskStatus status;
 
 
@@ -18,6 +18,10 @@ public class Task {
 
     public String getTitle() {
         return title;
+    }
+
+    public TaskType getType() {
+        return TaskType.TASK;
     }
 
     public void setTitle(String title) {
