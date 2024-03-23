@@ -1,8 +1,6 @@
 package service;
 
-import model.Epic;
-import model.Subtask;
-import model.Task;
+import model.*;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -39,7 +37,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         }
     }
 
-    static String historyToString(HistoryManager manager) {
+    private String historyToString(HistoryManager manager) {
         List<Task> history = manager.getHistory();
         StringBuilder result = new StringBuilder();
         for (Task task : history) {
@@ -51,24 +49,59 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         return result.toString();
     }
 
-    static List<Integer> historyFromString(String value) {
+    private List<Integer> historyFromString(String value) {
 
         return null;
     }
 
     private String toString(Task task) {
-        return String.format("%s,%s,%s,%s,%s\n", task.getId(), task.getType(), task.getTitle(),
-                task.getStatus(), task.getDescription());
-    }
-
-    private String toString(Epic task) {
-        return String.format("%s,%s,%s,%s,%s\n", task.getId(), task.getType(), task.getTitle(),
-                task.getStatus(), task.getDescription());
-    }
-
-    private String toString(Subtask task) {
         return String.format("%s,%s,%s,%s,%s,%s\n", task.getId(), task.getType(), task.getTitle(),
                 task.getStatus(), task.getDescription(), task.getIdEpic());
+    }
+
+//    private String toString(Epic task) {
+//        return String.format("%s,%s,%s,%s,%s\n", task.getId(), task.getType(), task.getTitle(),
+//                task.getStatus(), task.getDescription());
+//    }
+//
+//    private String toString(Subtask task) {
+//        return String.format("%s,%s,%s,%s,%s,%s\n", task.getId(), task.getType(), task.getTitle(),
+//                task.getStatus(), task.getDescription(), task.getIdEpic());
+//    }
+
+    private Task fromString(String value) {
+        String[] array = value.split(",");
+//        id,type,name,status,description,epic_id
+        String id = array[0];
+        String type = array[1];
+        String titleName = array[2];
+        String status = array[3];
+        String description = array[4];
+        String epicId = array[5];
+        switch (TaskType.valueOf(type)) {
+            case TASK:
+                Task task = new Task(titleName, description);
+                task.setId(Integer.getInteger(id));
+                task.setStatus(TaskStatus.valueOf(status));
+                return task;
+            break;
+            case EPIC:
+                Task epic = new Epic(titleName, description);
+                epic.setId(Integer.getInteger(id));
+                epic.setStatus(TaskStatus.valueOf(status));
+                return epic;
+            break;
+            case SUBTASK:
+                Task epic = new Subtask(titleName, description, );
+                epic.setId(Integer.getInteger(id));
+                epic.setStatus(TaskStatus.valueOf(status));
+                return epic;
+
+            break;
+            default:
+                return null;
+        }
+        return null;
     }
 
     @Override

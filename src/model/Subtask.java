@@ -29,7 +29,8 @@ public class Subtask extends Task {
         return Objects.hash(super.hashCode(), idEpic);
     }
 
-    public int getIdEpic() {
+    @Override
+    public Integer getIdEpic() {
         return idEpic;
     }
 }

@@ -24,6 +24,10 @@ public class Task {
         return TaskType.TASK;
     }
 
+    public Integer getIdEpic() {
+        return null;
+    }
+
     public void setTitle(String title) {
         this.title = title;
     }
