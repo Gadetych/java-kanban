@@ -5,9 +5,9 @@ import java.util.Objects;
 public class Subtask extends Task {
     int idEpic;
 
-    public Subtask(String title, String description, Epic epic) {
+    public Subtask(String title, String description, int epicId) {
         super(title, description);
-        this.idEpic = epic.getId();
+        this.idEpic = epicId;
     }
 
     @Override

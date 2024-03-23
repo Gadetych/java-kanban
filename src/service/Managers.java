@@ -1,15 +1,13 @@
 package service;
 
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class Managers {
 
     public static TasksManager getDefault() {
-        return new InMemoryTaskManager(getDefaultHistory());
-    }
-
-    public static TasksManager getDefaultFile() {
-        return new FileBackedTaskManager(getDefaultHistory(), Paths.get("TASK_CSV.csv"));
+        Path path = Paths.get("tasks.csv");
+        return new FileBackedTaskManager(getDefaultHistory(), path);
     }
 
     public static HistoryManager getDefaultHistory() {

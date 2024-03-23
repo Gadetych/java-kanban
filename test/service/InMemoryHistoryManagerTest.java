@@ -37,7 +37,7 @@ class InMemoryHistoryManagerTest {
         task.setId(1);
         Epic epic = new Epic("title", "description");
         epic.setId(2);
-        Subtask subtask = new Subtask("title", "description", epic);
+        Subtask subtask = new Subtask("title", "description", epic.getId());
         subtask.setId(3);
         epic.addSubtask(subtask);
         historyManager.add(task);
@@ -57,7 +57,7 @@ class InMemoryHistoryManagerTest {
         task.setId(1);
         Epic epic = new Epic("title", "description");
         epic.setId(2);
-        Subtask subtask = new Subtask("title", "description", epic);
+        Subtask subtask = new Subtask("title", "description", epic.getId());
         subtask.setId(3);
         epic.addSubtask(subtask);
         list.add(task);

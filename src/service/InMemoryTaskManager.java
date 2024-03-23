@@ -29,6 +29,14 @@ class InMemoryTaskManager implements TasksManager {
         return ++counter;
     }
 
+    public int getCounter() {
+        return counter;
+    }
+
+    public void setCounter(int counter) {
+        this.counter = counter;
+    }
+
     @Override
     public HistoryManager getHistoryManager() {
         return historyManager;

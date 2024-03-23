@@ -25,7 +25,7 @@ class InMemoryTaskManagerTest {
         tasksManager = Managers.getDefault();
         task = tasksManager.createTask(new Task("title", "description"));
         epic = tasksManager.createEpicTask(new Epic("e title", "e description"));
-        subtask = tasksManager.createSubtask(new Subtask("s title", "s description", epic));
+        subtask = tasksManager.createSubtask(new Subtask("s title", "s description", epic.getId()));
     }
 
 
@@ -146,7 +146,7 @@ class InMemoryTaskManagerTest {
         Epic expectedEpic = new Epic("e title", "e description");
         int idE = epic.getId();
         expectedEpic.setId(idE);
-        Subtask expectedTask = new Subtask("s title", "s description", expectedEpic);
+        Subtask expectedTask = new Subtask("s title", "s description", expectedEpic.getId());
         int id = subtask.getId();
         expectedTask.setId(id);
         return expectedTask;
