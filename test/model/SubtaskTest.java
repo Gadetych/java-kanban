@@ -3,7 +3,8 @@ package model;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 class SubtaskTest {
     Subtask subtask1;
@@ -15,8 +16,8 @@ class SubtaskTest {
     void creatTasks() {
         epic1 = new Epic("title", "description");
         epic2 = new Epic("title", "description");
-        subtask1 = new Subtask("title", "description", epic1);
-        subtask2 = new Subtask("title", "description", epic2);
+        subtask1 = new Subtask("title", "description", epic1.getId());
+        subtask2 = new Subtask("title", "description", epic2.getId());
     }
 
     @Test
