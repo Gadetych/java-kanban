@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class FileBackedTaskManagerTest {
     FileBackedTaskManager tasksManager;
@@ -85,5 +86,6 @@ class FileBackedTaskManagerTest {
         assertEquals(fileBackedTaskManager.getEpicTasks(), tasksManager.getEpicTasks(), "Списки эпиков не восстановились");
         assertEquals(fileBackedTaskManager.getSubtasks(), tasksManager.getSubtasks(), "Списки подзадач не восстановились");
         assertEquals(fileBackedTaskManager.getHistoryManager().getHistory(), tasksManager.getHistoryManager().getHistory(), "История не восстановились");
+        assertTrue(fileBackedTaskManager.getCounter() >= tasksManager.getCounter(), "Счетчик id должен продолжаться");
     }
 }
