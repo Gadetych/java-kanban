@@ -14,7 +14,7 @@ import java.util.Map;
 public class FileBackedTaskManager extends InMemoryTaskManager {
     private final Path path;
 
-    public FileBackedTaskManager(HistoryManager historyManager, Path path) {
+    FileBackedTaskManager(HistoryManager historyManager, Path path) {
         super(historyManager);
         this.path = path;
     }
@@ -69,6 +69,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                         epics.put(id, (Epic) task);
                         break;
                 }
+                line = reader.readLine();
             }
             setCounter(maxId);
             for (Map.Entry<Integer, Epic> entry : epics.entrySet()) {
@@ -100,7 +101,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         }
     }
 
-    private String historyToString(HistoryManager manager) {
+    static String historyToString(HistoryManager manager) {
         List<Task> history = manager.getHistory();
         StringBuilder result = new StringBuilder();
         for (Task task : history) {
@@ -112,21 +113,21 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         return result.toString();
     }
 
-    private List<Integer> historyFromString(String value) {
+    static List<Integer> historyFromString(String value) {
         String[] ids = value.split(",");
         List<Integer> list = new ArrayList<>();
         for (String s : ids) {
-            list.add(Integer.getInteger(s));
+            list.add(Integer.valueOf(s));
         }
         return list;
     }
 
-    private String toString(Task task) {
+    String toString(Task task) {
         return String.format("%s,%s,%s,%s,%s,%s\n", task.getId(), task.getType(), task.getTitle(),
                 task.getStatus(), task.getDescription(), task.getIdEpic());
     }
 
-    private Task fromString(String value) {
+    Task fromString(String value) {
         String[] array = value.split(",");
 //        id,type,name,status,description,epic_id
         String id = array[0];
@@ -138,17 +139,17 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         switch (TaskType.valueOf(type)) {
             case TASK:
                 Task task = new Task(titleName, description);
-                task.setId(Integer.getInteger(id));
+                task.setId(Integer.parseInt(id));
                 task.setStatus(TaskStatus.valueOf(status));
                 return task;
             case EPIC:
                 Task epic = new Epic(titleName, description);
-                epic.setId(Integer.getInteger(id));
+                epic.setId(Integer.parseInt(id));
                 epic.setStatus(TaskStatus.valueOf(status));
                 return epic;
             case SUBTASK:
-                Task subtask = new Subtask(titleName, description, Integer.getInteger(epicId));
-                subtask.setId(Integer.getInteger(id));
+                Task subtask = new Subtask(titleName, description, Integer.parseInt(epicId));
+                subtask.setId(Integer.parseInt(id));
                 subtask.setStatus(TaskStatus.valueOf(status));
                 return subtask;
         }

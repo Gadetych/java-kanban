@@ -22,7 +22,7 @@ class InMemoryTaskManagerTest {
 
     @BeforeEach
     void createTaskManager() {
-        tasksManager = Managers.getDefault();
+        tasksManager = new InMemoryTaskManager(new InMemoryHistoryManager());
         task = tasksManager.createTask(new Task("title", "description"));
         epic = tasksManager.createEpicTask(new Epic("e title", "e description"));
         subtask = tasksManager.createSubtask(new Subtask("s title", "s description", epic.getId()));
