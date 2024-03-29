@@ -129,13 +129,12 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     Task fromString(String value) {
         String[] array = value.split(",");
-//        id,type,name,status,description,epic_id
-        String id = array[0];
-        String type = array[1];
-        String titleName = array[2];
-        String status = array[3];
-        String description = array[4];
-        String epicId = array[5];
+        String id = array[FileType.ID.ordinal()];
+        String type = array[FileType.TYPE.ordinal()];
+        String titleName = array[FileType.NAME.ordinal()];
+        String status = array[FileType.STATUS.ordinal()];
+        String description = array[FileType.DESCRIPTION.ordinal()];
+        String epicId = array[FileType.EPIC_ID.ordinal()];
         switch (TaskType.valueOf(type)) {
             case TASK:
                 Task task = new Task(titleName, description);
