@@ -5,9 +5,14 @@ import java.util.Objects;
 public class Subtask extends Task {
     int idEpic;
 
-    public Subtask(String title, String description, Epic epic) {
+    public Subtask(String title, String description, int epicId) {
         super(title, description);
-        this.idEpic = epic.getId();
+        this.idEpic = epicId;
+    }
+
+    @Override
+    public TaskType getType() {
+        return TaskType.SUBTASK;
     }
 
     @Override
@@ -24,7 +29,8 @@ public class Subtask extends Task {
         return Objects.hash(super.hashCode(), idEpic);
     }
 
-    public int getIdEpic() {
+    @Override
+    public Integer getIdEpic() {
         return idEpic;
     }
 }

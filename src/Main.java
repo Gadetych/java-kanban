@@ -16,13 +16,13 @@ public class Main {
         task1 = tasksManager.createTask(task1);
         task2 = tasksManager.createTask(task2);
         epic1 = tasksManager.createEpicTask(epic1);
-        Subtask subtask1 = new Subtask("Подзадача1", "описание1", epic1);
-        Subtask subtask2 = new Subtask("Подзадача2", "описание2", epic1);
+        Subtask subtask1 = new Subtask("Подзадача1", "описание1", epic1.getId());
+        Subtask subtask2 = new Subtask("Подзадача2", "описание2", epic1.getId());
         subtask1 = tasksManager.createSubtask(subtask1);
         subtask2 = tasksManager.createSubtask(subtask2);
         Epic epic2 = new Epic("Эпик2", "описание2");
         epic2 = tasksManager.createEpicTask(epic2);
-        Subtask subtask21 = new Subtask("Подзадача21", "описание21", epic2);
+        Subtask subtask21 = new Subtask("Подзадача21", "описание21", epic2.getId());
         subtask21 = tasksManager.createSubtask(subtask21);
         epic1.addSubtask(subtask1);
         epic1.addSubtask(subtask2);
@@ -66,5 +66,7 @@ public class Main {
         System.out.println(tasksManager.getTasks());
         System.out.println(tasksManager.getEpicTasks());
         System.out.println(tasksManager.getSubtasks());
+        System.out.println();
+        System.out.println(tasksManager.getTask(task2.getId()));
     }
 }
