@@ -1,11 +1,13 @@
 package service;
 
 import exeption.ManagerSaveException;
+import exeption.NotFoundException;
 import model.*;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,7 +37,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             writer.newLine();
             writer.write(historyToString(getHistoryManager()));
         } catch (IOException e) {
-            throw new ManagerSaveException(e);
+            throw new ManagerSaveException("Ошибка сериализации данных в файл", e);
         }
     }
 
@@ -98,7 +100,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 }
             }
         } catch (IOException e) {
-            throw new ManagerSaveException(e);
+            throw new ManagerSaveException("Ошибка десериализации данных из файла", e);
         }
     }
 
@@ -124,42 +126,46 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     String toString(Task task) {
-        LocalDateTime start = task.getStartTime();
-        LocalDateTime end = task.getEndTime();
         return String.format("%s,%s,%s,%s,%s,%s,%s,%s,%s\n", task.getId(), task.getType(), task.getTitle(),
-                task.getStatus(), task.getDescription(), task.getIdEpic(), start.format(Task.START_TIME_FORMATTER)
-                , task.getDuration().toMinutes(), end.format(Task.START_TIME_FORMATTER));
+                task.getStatus(), task.getDescription(), task.getIdEpic(), task.getStartTime()
+                , task.getDuration().toMinutes(), task.getEndTime());
     }
 
     Task fromString(String value) {
         String[] array = value.split(",");
-        String id = array[FileType.ID.ordinal()];
+        int id = Integer.parseInt(array[FileType.ID.ordinal()]);
         String type = array[FileType.TYPE.ordinal()];
         String titleName = array[FileType.NAME.ordinal()];
-        String status = array[FileType.STATUS.ordinal()];
+        TaskStatus status = TaskStatus.valueOf(array[FileType.STATUS.ordinal()]);
         String description = array[FileType.DESCRIPTION.ordinal()];
         String epicId = array[FileType.EPIC_ID.ordinal()];
-        String startTime = array[FileType.START_TIME.ordinal()];
-        String duration = array[FileType.DURATION.ordinal()];
-        String endTime = array[FileType.END_TIME.ordinal()];
+        LocalDateTime startTime = LocalDateTime.parse(array[FileType.START_TIME.ordinal()]);
+        Duration duration = Duration.ofMinutes(Long.parseLong(array[FileType.DURATION.ordinal()]));
+        String end = array[FileType.END_TIME.ordinal()];
+        LocalDateTime endTime = LocalDateTime.parse(end);
         switch (TaskType.valueOf(type)) {
             case TASK:
-                Task task = new Task(titleName, description, startTime, Long.parseLong(duration));
-                task.setId(Integer.parseInt(id));
-                task.setStatus(TaskStatus.valueOf(status));
+                Task task = new Task(titleName, description, startTime
+                        , duration);
+                task.setId(id);
+                task.setStatus(status);
                 return task;
             case EPIC:
-                Task epic = new Epic(titleName, description, startTime, Long.parseLong(duration), endTime);
-                epic.setId(Integer.parseInt(id));
-                epic.setStatus(TaskStatus.valueOf(status));
+                Epic epic = new Epic(titleName, description);
+                epic.setId(id);
+                epic.setStatus(status);
+                epic.setStartTime(startTime);
+                epic.setDuration(duration);
+                epic.setEndTime(endTime);
                 return epic;
             case SUBTASK:
-                Task subtask = new Subtask(titleName, description, Integer.parseInt(epicId), startTime, Long.parseLong(duration));
-                subtask.setId(Integer.parseInt(id));
-                subtask.setStatus(TaskStatus.valueOf(status));
+                Subtask subtask = new Subtask(titleName, description, Integer.parseInt(epicId), startTime, duration);
+                subtask.setId(id);
+                subtask.setStatus(status);
                 return subtask;
+            default:
+                throw new NotFoundException("Тип задачи не найден.");
         }
-        return null;
     }
 
     @Override

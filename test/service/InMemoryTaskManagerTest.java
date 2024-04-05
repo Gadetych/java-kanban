@@ -7,6 +7,9 @@ import model.TaskStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,9 +26,11 @@ class InMemoryTaskManagerTest {
     @BeforeEach
     void createTaskManager() {
         tasksManager = new InMemoryTaskManager(new InMemoryHistoryManager());
-        task = tasksManager.createTask(new Task("title", "description"));
+        task = tasksManager.createTask(new Task("title", "description"
+                , LocalDateTime.of(2024, Month.APRIL, 4, 12, 0), Duration.ofMinutes(10)));
         epic = tasksManager.createEpicTask(new Epic("e title", "e description"));
-        subtask = tasksManager.createSubtask(new Subtask("s title", "s description", epic.getId()));
+        subtask = tasksManager.createSubtask(new Subtask("s title", "s description", epic.getId()
+                , LocalDateTime.of(2024, Month.APRIL, 4, 12, 0), Duration.ofMinutes(15)));
     }
 
 
@@ -34,7 +39,8 @@ class InMemoryTaskManagerTest {
     void shouldTasksManagerSaved1Task() {
         Map<Integer, Task> actual = tasksManager.getTasks();
         Map<Integer, Task> expected = new HashMap<>();
-        Task expectedTask = new Task("title", "description");
+        Task expectedTask = new Task("title", "description"
+                , LocalDateTime.of(2024, Month.APRIL, 4, 12, 0), Duration.ofMinutes(10));
         int id = task.getId();
         expectedTask.setId(id);
         expected.put(id, expectedTask);
@@ -53,7 +59,7 @@ class InMemoryTaskManagerTest {
     void shouldNewTaskEqualReturnedTask() {
         int id = task.getId();
         Task actual = tasksManager.getTask(id);
-        Task expected = new Task("title", "description");
+        Task expected = new Task("title", "description", task.getStartTime(), task.getDuration());
         expected.setId(id);
 
         assertEquals(expected, actual, "Задачи не совпадают");
@@ -90,6 +96,9 @@ class InMemoryTaskManagerTest {
         List<Integer> subtasksId = new ArrayList<>();
         subtasksId.add(subtask.getId());
         expectedEpic.setSubtasksId(subtasksId);
+        expectedEpic.setStartTime(subtask.getStartTime());
+        expectedEpic.setDuration(subtask.getDuration());
+        expectedEpic.setEndTime(subtask.getEndTime());
         expected.put(id, expectedEpic);
 
         assertEquals(expected, actual, "Списки эпиков не совпадают");
@@ -108,6 +117,9 @@ class InMemoryTaskManagerTest {
         Epic actual = tasksManager.getEpicTask(id);
         Epic expected = new Epic("e title", "e description");
         expected.setId(id);
+        expected.setStartTime(actual.getStartTime());
+        expected.setEndTime(actual.getEndTime());
+        expected.setDuration(actual.getDuration());
         List<Integer> subtasksId = new ArrayList<>();
         subtasksId.add(subtask.getId());
         expected.setSubtasksId(subtasksId);
@@ -146,7 +158,8 @@ class InMemoryTaskManagerTest {
         Epic expectedEpic = new Epic("e title", "e description");
         int idE = epic.getId();
         expectedEpic.setId(idE);
-        Subtask expectedTask = new Subtask("s title", "s description", expectedEpic.getId());
+        Subtask expectedTask = new Subtask("s title", "s description", expectedEpic.getId()
+                , subtask.getStartTime(), subtask.getDuration());
         int id = subtask.getId();
         expectedTask.setId(id);
         return expectedTask;

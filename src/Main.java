@@ -5,27 +5,30 @@ import model.TaskStatus;
 import service.Managers;
 import service.TasksManager;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+
 public class Main {
     public static void main(String[] args) {
         System.out.println("Поехали!");
         System.out.println("Проверяем корректность созданных задач");
-        Task task1 = new Task("Задача1", "описание1", "04.04.2024 10:00", 15);
-        Task task2 = new Task("Задача2", "описание2", "04.04.2024 11:00", 25);
+        Task task1 = new Task("Задача1", "описание1", LocalDateTime.now(), Duration.ofMinutes(15));
+        Task task2 = new Task("Задача2", "описание2", LocalDateTime.now(), Duration.ofMinutes(25));
         Epic epic1 = new Epic("Эпик1", "описание1");
         TasksManager tasksManager = Managers.getDefault();
         task1 = tasksManager.createTask(task1);
         task2 = tasksManager.createTask(task2);
         epic1 = tasksManager.createEpicTask(epic1);
         Subtask subtask1 = new Subtask("Подзадача1", "описание1", epic1.getId()
-                , "04.04.2024 09:00", 60);
+                , LocalDateTime.now(), Duration.ofMinutes(60));
         Subtask subtask2 = new Subtask("Подзадача2", "описание2", epic1.getId()
-                , "04.05.2024 12:00", 45);
+                , LocalDateTime.now(), Duration.ofMinutes(45));
         subtask1 = tasksManager.createSubtask(subtask1);
         subtask2 = tasksManager.createSubtask(subtask2);
         Epic epic2 = new Epic("Эпик2", "описание2");
         epic2 = tasksManager.createEpicTask(epic2);
         Subtask subtask21 = new Subtask("Подзадача21", "описание21", epic2.getId()
-                , "04.04.2024 10:00", 15);
+                , LocalDateTime.now(), Duration.ofMinutes(25));
         subtask21 = tasksManager.createSubtask(subtask21);
         epic1.addSubtask(subtask1);
         epic1.addSubtask(subtask2);

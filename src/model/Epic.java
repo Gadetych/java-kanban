@@ -11,18 +11,11 @@ public class Epic extends Task {
     private LocalDateTime endTime;
 
     public Epic(String title, String description) {
-        super(title, description);
-        super.setStartTime(LocalDateTime.now());
-        super.setDuration(Duration.ZERO);
+        super(title, description, LocalDateTime.now(), Duration.ofMinutes(0));
         this.endTime = LocalDateTime.now();
         this.subtasksId = new ArrayList<>();
     }
 
-    public Epic(String title, String description, String startTime, long duration, String endTime) {
-        super(title, description, startTime, duration);
-        this.subtasksId = new ArrayList<>();
-        this.endTime = LocalDateTime.parse(endTime, Task.START_TIME_FORMATTER);
-    }
 
     @Override
     public TaskType getType() {

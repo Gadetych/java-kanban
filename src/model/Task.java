@@ -2,7 +2,6 @@ package model;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 public class Task {
@@ -12,7 +11,6 @@ public class Task {
     private TaskStatus status;
     private LocalDateTime startTime;
     private Duration duration; //продолжительность в минутах
-    public static final DateTimeFormatter START_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
 
 
     public Task(String title, String description) {
@@ -21,12 +19,12 @@ public class Task {
         status = TaskStatus.NEW;
     }
 
-    public Task(String title, String description, String startTime, long duration) {
+    public Task(String title, String description, LocalDateTime startTime, Duration duration) {
         this.title = title;
         this.description = description;
         status = TaskStatus.NEW;
-        this.startTime = LocalDateTime.parse(startTime, START_TIME_FORMATTER);
-        this.duration = Duration.ofMinutes(duration);
+        this.startTime = startTime;
+        this.duration = duration;
     }
 
 
@@ -107,6 +105,6 @@ public class Task {
     @Override
     public String toString() {
         return this.getClass() + "{title=" + title + ", description=" + description + ", status=" + status
-                + ", id=" + id + ", startTime=" + startTime + ", duration=" + duration + '}';
+                + ", id=" + id + ", startTime=" + startTime + ", duration=" + duration + ", endTime=" + getEndTime() + '}';
     }
 }
