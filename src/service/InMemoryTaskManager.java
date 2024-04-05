@@ -5,6 +5,8 @@ import model.Subtask;
 import model.Task;
 import model.TaskStatus;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -130,6 +132,7 @@ class InMemoryTaskManager implements TasksManager {
             originalEpicTask.setDescription(epicTask.getDescription());
             originalEpicTask.setSubtasksId(epicTask.getSubtasksId());
             updateEpicStatus(originalEpicTask);
+            updateEpicTime(originalEpicTask);
         }
         return originalEpicTask;
     }
@@ -170,6 +173,44 @@ class InMemoryTaskManager implements TasksManager {
         }
     }
 
+    private void updateEpicTime(Epic epic) {
+        updateEpicStartTime(epic);
+        updateEpicDuration(epic);
+        updateEpicEndTime(epic);
+    }
+
+    private void updateEpicStartTime(Epic epic) {
+        List<Integer> subtasksId = epic.getSubtasksId();
+        if (!subtasksId.isEmpty()) {
+            LocalDateTime startTime = subtasksId.stream()
+                    .map(this::getSubtask)
+                    .map(Subtask::getStartTime)
+                    .min(LocalDateTime::compareTo)
+                    .get();
+            epic.setStartTime(startTime);
+        }
+    }
+
+    private void updateEpicDuration(Epic epic) {
+        Duration duration = epic.getSubtasksId().stream()
+                .map(this::getSubtask)
+                .map(Subtask::getDuration)
+                .reduce(Duration.ofMinutes(0), Duration::plus);
+        epic.setDuration(duration);
+
+    }
+
+    private void updateEpicEndTime(Epic epic) {
+        List<Integer> subtasksId = epic.getSubtasksId();
+        if (!subtasksId.isEmpty()) {
+            LocalDateTime endTime = subtasksId.stream()
+                    .map(this::getSubtask)
+                    .map(Subtask::getEndTime)
+                    .max(LocalDateTime::compareTo)
+                    .get();
+            epic.setEndTime(endTime);
+        }
+    }
 
     //    Subtask
     @Override

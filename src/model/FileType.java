@@ -6,5 +6,8 @@ public enum FileType {
     NAME,
     STATUS,
     DESCRIPTION,
-    EPIC_ID
+    EPIC_ID,
+    START_TIME,
+    DURATION,
+    END_TIME
 }

@@ -6,6 +6,7 @@ import model.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,7 +22,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     private void save() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(path.toFile(), StandardCharsets.UTF_8))) {
-            writer.write("id,type,name,status,description,epic\n");
+            writer.write("id,type,name,status,description,epic,startTime,duration,endTime\n");
             for (Task task : this.getTasks().values()) {
                 writer.write(toString(task));
             }
@@ -123,8 +124,11 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     String toString(Task task) {
-        return String.format("%s,%s,%s,%s,%s,%s\n", task.getId(), task.getType(), task.getTitle(),
-                task.getStatus(), task.getDescription(), task.getIdEpic());
+        LocalDateTime start = task.getStartTime();
+        LocalDateTime end = task.getEndTime();
+        return String.format("%s,%s,%s,%s,%s,%s,%s,%s,%s\n", task.getId(), task.getType(), task.getTitle(),
+                task.getStatus(), task.getDescription(), task.getIdEpic(), start.format(Task.START_TIME_FORMATTER)
+                , task.getDuration().toMinutes(), end.format(Task.START_TIME_FORMATTER));
     }
 
     Task fromString(String value) {
@@ -135,19 +139,22 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         String status = array[FileType.STATUS.ordinal()];
         String description = array[FileType.DESCRIPTION.ordinal()];
         String epicId = array[FileType.EPIC_ID.ordinal()];
+        String startTime = array[FileType.START_TIME.ordinal()];
+        String duration = array[FileType.DURATION.ordinal()];
+        String endTime = array[FileType.END_TIME.ordinal()];
         switch (TaskType.valueOf(type)) {
             case TASK:
-                Task task = new Task(titleName, description);
+                Task task = new Task(titleName, description, startTime, Long.parseLong(duration));
                 task.setId(Integer.parseInt(id));
                 task.setStatus(TaskStatus.valueOf(status));
                 return task;
             case EPIC:
-                Task epic = new Epic(titleName, description);
+                Task epic = new Epic(titleName, description, startTime, Long.parseLong(duration), endTime);
                 epic.setId(Integer.parseInt(id));
                 epic.setStatus(TaskStatus.valueOf(status));
                 return epic;
             case SUBTASK:
-                Task subtask = new Subtask(titleName, description, Integer.parseInt(epicId));
+                Task subtask = new Subtask(titleName, description, Integer.parseInt(epicId), startTime, Long.parseLong(duration));
                 subtask.setId(Integer.parseInt(id));
                 subtask.setStatus(TaskStatus.valueOf(status));
                 return subtask;
