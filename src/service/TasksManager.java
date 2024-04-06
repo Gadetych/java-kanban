@@ -50,4 +50,6 @@ public interface TasksManager {
     Subtask updateSubtask(Subtask subtask);
 
     Subtask removeSubtask(Integer id);
+
+    List<Task> getPrioritizedTasks();
 }

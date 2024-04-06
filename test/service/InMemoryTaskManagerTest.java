@@ -211,5 +211,11 @@ class InMemoryTaskManagerTest {
         assertNull(itsNull, "Подзадача не удалена");
     }
 
+    @Test
+    void shouldPrioritizedTasksNotEmpty() {
+        List<Task> actual = tasksManager.getPrioritizedTasks();
+
+        assertFalse(actual.isEmpty(), "Список приоритетных задачь не должен быть пустым.");
+    }
 
 }

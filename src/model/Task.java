@@ -85,7 +85,11 @@ public class Task {
     }
 
     public LocalDateTime getEndTime() {
-        return startTime.plus(duration);
+        if (startTime != null) {
+            return startTime.plus(duration);
+        } else {
+            return null;
+        }
     }
 
     @Override
@@ -93,8 +97,12 @@ public class Task {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Task task = (Task) o;
-        return id == task.id && title.equals(task.title) && description.equals(task.description) && status == task.status
-                && startTime.equals(task.startTime) && duration.equals(task.duration);
+        if (startTime != null && duration != null) {
+            return id == task.id && title.equals(task.title) && description.equals(task.description) && status == task.status
+                    && startTime.equals(task.startTime) && duration.equals(task.duration);
+        } else {
+            return id == task.id && title.equals(task.title) && description.equals(task.description) && status == task.status;
+        }
     }
 
     @Override
