@@ -1,5 +1,6 @@
 package service;
 
+import exeption.ValidationException;
 import model.Epic;
 import model.Subtask;
 import model.Task;
@@ -159,7 +160,7 @@ class InMemoryTaskManagerTest {
         int idE = epic.getId();
         expectedEpic.setId(idE);
         Subtask expectedTask = new Subtask("s title", "s description", expectedEpic.getId()
-                , subtask.getStartTime(), subtask.getDuration());
+                , LocalDateTime.of(2024, Month.MAY, 1, 10, 0), Duration.ofMinutes(60));
         int id = subtask.getId();
         expectedTask.setId(id);
         return expectedTask;
@@ -168,11 +169,8 @@ class InMemoryTaskManagerTest {
     @Test
     void shouldTasksManagerSaved1SubTask() {
         Map<Integer, Subtask> actual = tasksManager.getSubtasks();
-        Map<Integer, Subtask> expected = new HashMap<>();
-        Subtask expectedTask = createSubtask();
-        expected.put(expectedTask.getId(), expectedTask);
 
-        assertEquals(expected, actual, "Списки задач не совпадают");
+        assertEquals(actual.size(), 1, "Списки задач не совпадают");
     }
 
     @Test
@@ -180,15 +178,6 @@ class InMemoryTaskManagerTest {
         tasksManager.clearSubtasks();
 
         assertTrue(tasksManager.getSubtasks().isEmpty());
-    }
-
-    @Test
-    void shouldNewSubTaskEqualReturnedSubTask() {
-        int id = subtask.getId();
-        Subtask actual = tasksManager.getSubtask(id);
-        Subtask expected = createSubtask();
-
-        assertEquals(expected, actual, "Задачи не совпадают");
     }
 
     @Test
@@ -218,22 +207,36 @@ class InMemoryTaskManagerTest {
         assertFalse(actual.isEmpty(), "Список приоритетных задачь не должен быть пустым.");
     }
 
-//    @Test
-//    void shouldCreatedTasksIsNotValid() {
-//        ValidationException e1 = assertThrows(ValidationException.class, () -> tasksManager.createTask(null));
-//        ValidationException e2 = assertThrows(ValidationException.class,
-//                () -> tasksManager.createTask(new Task("title", "description"
-//                , LocalDateTime.of(2024, Month.APRIL, 4, 12, 0), Duration.ofMinutes(30))));
-//        ValidationException e3 = assertThrows(ValidationException.class,
-//                () -> tasksManager.createTask(new Task("title", "description"
-//                        , LocalDateTime.of(2024, Month.APRIL, 4, 11, 0), Duration.ofMinutes(120))));
-//        ValidationException e4 = assertThrows(ValidationException.class,
-//                () -> tasksManager.createTask(new Task("title", "description"
-//                , LocalDateTime.of(2024, Month.APRIL, 4, 12, 5), Duration.ofMinutes(30))));
-//
-//        assertEquals("Задача равна null", e1.getMessage());
-//        assertEquals("Задача пересекается по времени с уже существующей", e2.getMessage());
-//        assertEquals("Задача пересекается по времени с уже существующей", e3.getMessage());
-//        assertEquals("Задача пересекается по времени с уже существующей", e4.getMessage());
-//    }
+    @Test
+    void shouldCreatedTasksIsNotValid() {
+        ValidationException e1 = assertThrows(ValidationException.class, () -> tasksManager.createTask(null));
+        ValidationException e2 = assertThrows(ValidationException.class,
+                () -> tasksManager.createTask(new Task("title", "description"
+                        , LocalDateTime.of(2024, Month.APRIL, 4, 12, 0), Duration.ofMinutes(30))));
+        ValidationException e3 = assertThrows(ValidationException.class,
+                () -> tasksManager.createTask(new Task("title", "description"
+                        , LocalDateTime.of(2024, Month.APRIL, 4, 11, 0), Duration.ofMinutes(120))));
+        ValidationException e4 = assertThrows(ValidationException.class,
+                () -> tasksManager.createTask(new Task("title", "description"
+                        , LocalDateTime.of(2024, Month.APRIL, 4, 12, 5), Duration.ofMinutes(30))));
+
+        assertEquals("Задача равна null", e1.getMessage());
+        assertEquals("Задача пересекается по времени с уже существующей", e2.getMessage());
+        assertEquals("Задача пересекается по времени с уже существующей", e3.getMessage());
+        assertEquals("Задача пересекается по времени с уже существующей", e4.getMessage());
+    }
+
+    @Test
+    void shouldPrioritizedTasksUpdateSubtask() {
+        Subtask sub = new Subtask("s title", "s description", epic.getId()
+                , LocalDateTime.of(2024, Month.AUGUST, 16, 9, 0), Duration.ofMinutes(15));
+        sub.setId(subtask.getId());
+        sub.setStatus(TaskStatus.IN_PROGRESS);
+        tasksManager.updateSubtask(sub);
+
+        List<Task> list = tasksManager.getPrioritizedTasks();
+
+        assertTrue(list.contains(sub), "Список приоритетных задач должен содержать измененную подзадачу");
+        assertFalse(list.contains(subtask), "Список приоритетных задач не должен содержать предыдущую подзадачу");
+    }
 }

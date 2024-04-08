@@ -37,7 +37,7 @@ class FileBackedTaskManagerTest {
                 , LocalDateTime.of(2024, Month.APRIL, 4, 12, 0), Duration.ofMinutes(15)));
         epic = tasksManager.createEpicTask(new Epic("e title", "e description"));
         subtask = tasksManager.createSubtask(new Subtask("s title", "s description", epic.getId()
-                , LocalDateTime.of(2024, Month.APRIL, 4, 12, 0), Duration.ofMinutes(20)));
+                , LocalDateTime.of(2024, Month.APRIL, 4, 14, 0), Duration.ofMinutes(20)));
     }
 
 
