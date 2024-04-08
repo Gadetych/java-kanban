@@ -62,15 +62,9 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                     maxId = id;
                 }
                 switch (task.getType()) {
-                    case TASK:
-                        tasks.put(id, task);
-                        break;
-                    case SUBTASK:
-                        subtasks.put(id, (Subtask) task);
-                        break;
-                    case EPIC:
-                        epics.put(id, (Epic) task);
-                        break;
+                    case TASK -> tasks.put(id, task);
+                    case SUBTASK -> subtasks.put(id, (Subtask) task);
+                    case EPIC -> epics.put(id, (Epic) task);
                 }
                 line = reader.readLine();
             }
@@ -127,8 +121,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     String toString(Task task) {
         return String.format("%s,%s,%s,%s,%s,%s,%s,%s,%s\n", task.getId(), task.getType(), task.getTitle(),
-                task.getStatus(), task.getDescription(), task.getIdEpic(), task.getStartTime()
-                , task.getDuration().toMinutes(), task.getEndTime());
+                task.getStatus(), task.getDescription(), task.getIdEpic(), task.getStartTime(),
+                task.getDuration().toMinutes(), task.getEndTime());
     }
 
     Task fromString(String value) {
@@ -144,13 +138,13 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         String end = array[FileType.END_TIME.ordinal()];
         LocalDateTime endTime = LocalDateTime.parse(end);
         switch (TaskType.valueOf(type)) {
-            case TASK:
-                Task task = new Task(titleName, description, startTime
-                        , duration);
+            case TASK -> {
+                Task task = new Task(titleName, description, startTime, duration);
                 task.setId(id);
                 task.setStatus(status);
                 return task;
-            case EPIC:
+            }
+            case EPIC -> {
                 Epic epic = new Epic(titleName, description);
                 epic.setId(id);
                 epic.setStatus(status);
@@ -158,13 +152,14 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 epic.setDuration(duration);
                 epic.setEndTime(endTime);
                 return epic;
-            case SUBTASK:
+            }
+            case SUBTASK -> {
                 Subtask subtask = new Subtask(titleName, description, Integer.parseInt(epicId), startTime, duration);
                 subtask.setId(id);
                 subtask.setStatus(status);
                 return subtask;
-            default:
-                throw new NotFoundException("Тип задачи не найден.");
+            }
+            default -> throw new NotFoundException("Тип задачи не найден.");
         }
     }
 
