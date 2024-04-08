@@ -30,7 +30,7 @@ class InMemoryTaskManagerTest {
                 , LocalDateTime.of(2024, Month.APRIL, 4, 12, 0), Duration.ofMinutes(10)));
         epic = tasksManager.createEpicTask(new Epic("e title", "e description"));
         subtask = tasksManager.createSubtask(new Subtask("s title", "s description", epic.getId()
-                , LocalDateTime.of(2024, Month.APRIL, 4, 12, 0), Duration.ofMinutes(15)));
+                , LocalDateTime.of(2024, Month.APRIL, 4, 14, 0), Duration.ofMinutes(15)));
     }
 
 
@@ -212,10 +212,28 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    void shouldPrioritizedTasksNotEmpty() {
+    void shouldCreatedTasksIsValid() {
         List<Task> actual = tasksManager.getPrioritizedTasks();
 
         assertFalse(actual.isEmpty(), "Список приоритетных задачь не должен быть пустым.");
     }
 
+//    @Test
+//    void shouldCreatedTasksIsNotValid() {
+//        ValidationException e1 = assertThrows(ValidationException.class, () -> tasksManager.createTask(null));
+//        ValidationException e2 = assertThrows(ValidationException.class,
+//                () -> tasksManager.createTask(new Task("title", "description"
+//                , LocalDateTime.of(2024, Month.APRIL, 4, 12, 0), Duration.ofMinutes(30))));
+//        ValidationException e3 = assertThrows(ValidationException.class,
+//                () -> tasksManager.createTask(new Task("title", "description"
+//                        , LocalDateTime.of(2024, Month.APRIL, 4, 11, 0), Duration.ofMinutes(120))));
+//        ValidationException e4 = assertThrows(ValidationException.class,
+//                () -> tasksManager.createTask(new Task("title", "description"
+//                , LocalDateTime.of(2024, Month.APRIL, 4, 12, 5), Duration.ofMinutes(30))));
+//
+//        assertEquals("Задача равна null", e1.getMessage());
+//        assertEquals("Задача пересекается по времени с уже существующей", e2.getMessage());
+//        assertEquals("Задача пересекается по времени с уже существующей", e3.getMessage());
+//        assertEquals("Задача пересекается по времени с уже существующей", e4.getMessage());
+//    }
 }
