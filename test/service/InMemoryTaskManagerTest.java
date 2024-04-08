@@ -211,14 +211,17 @@ class InMemoryTaskManagerTest {
     void shouldCreatedTasksIsNotValid() {
         ValidationException e1 = assertThrows(ValidationException.class, () -> tasksManager.createTask(null));
         ValidationException e2 = assertThrows(ValidationException.class,
-                () -> tasksManager.createTask(new Task("title", "description"
-                        , LocalDateTime.of(2024, Month.APRIL, 4, 12, 0), Duration.ofMinutes(30))));
+                                              () -> tasksManager.createTask(new Task("title", "description"
+                                                      , LocalDateTime.of(2024, Month.APRIL, 4, 12, 0),
+                                                                                     Duration.ofMinutes(30))));
         ValidationException e3 = assertThrows(ValidationException.class,
-                () -> tasksManager.createTask(new Task("title", "description"
-                        , LocalDateTime.of(2024, Month.APRIL, 4, 11, 0), Duration.ofMinutes(120))));
+                                              () -> tasksManager.createTask(new Task("title", "description"
+                                                      , LocalDateTime.of(2024, Month.APRIL, 4, 11, 0),
+                                                                                     Duration.ofMinutes(120))));
         ValidationException e4 = assertThrows(ValidationException.class,
-                () -> tasksManager.createTask(new Task("title", "description"
-                        , LocalDateTime.of(2024, Month.APRIL, 4, 12, 5), Duration.ofMinutes(30))));
+                                              () -> tasksManager.createTask(new Task("title", "description"
+                                                      , LocalDateTime.of(2024, Month.APRIL, 4, 12, 5),
+                                                                                     Duration.ofMinutes(30))));
 
         assertEquals("Задача равна null", e1.getMessage());
         assertEquals("Задача пересекается по времени с уже существующей", e2.getMessage());

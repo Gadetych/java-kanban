@@ -22,6 +22,33 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         this.path = path;
     }
 
+    static FileBackedTaskManager loadFromFile(Path path) {
+        FileBackedTaskManager manager = new FileBackedTaskManager(Managers.getDefaultHistory(), path);
+        manager.loadFromFile();
+        return manager;
+    }
+
+    static String historyToString(HistoryManager manager) {
+        List<Task> history = manager.getHistory();
+        StringBuilder result = new StringBuilder();
+        for (Task task : history) {
+            result.append(task.getId()).append(",");
+        }
+        if (result.length() > 0) {
+            result.deleteCharAt(result.length() - 1);
+        }
+        return result.toString();
+    }
+
+    static List<Integer> historyFromString(String value) {
+        String[] ids = value.split(",");
+        List<Integer> list = new ArrayList<>();
+        for (String s : ids) {
+            list.add(Integer.valueOf(s));
+        }
+        return list;
+    }
+
     private void save() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(path.toFile(), StandardCharsets.UTF_8))) {
             writer.write("id,type,name,status,description,epic,startTime,duration,endTime\n");
@@ -39,12 +66,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         } catch (IOException e) {
             throw new ManagerSaveException("Ошибка сериализации данных в файл", e);
         }
-    }
-
-    static FileBackedTaskManager loadFromFile(Path path) {
-        FileBackedTaskManager manager = new FileBackedTaskManager(Managers.getDefaultHistory(), path);
-        manager.loadFromFile();
-        return manager;
     }
 
     private void loadFromFile() {
@@ -98,31 +119,10 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         }
     }
 
-    static String historyToString(HistoryManager manager) {
-        List<Task> history = manager.getHistory();
-        StringBuilder result = new StringBuilder();
-        for (Task task : history) {
-            result.append(task.getId()).append(",");
-        }
-        if (result.length() > 0) {
-            result.deleteCharAt(result.length() - 1);
-        }
-        return result.toString();
-    }
-
-    static List<Integer> historyFromString(String value) {
-        String[] ids = value.split(",");
-        List<Integer> list = new ArrayList<>();
-        for (String s : ids) {
-            list.add(Integer.valueOf(s));
-        }
-        return list;
-    }
-
     String toString(Task task) {
         return String.format("%s,%s,%s,%s,%s,%s,%s,%s,%s\n", task.getId(), task.getType(), task.getTitle(),
-                task.getStatus(), task.getDescription(), task.getIdEpic(), task.getStartTime(),
-                task.getDuration().toMinutes(), task.getEndTime());
+                             task.getStatus(), task.getDescription(), task.getIdEpic(), task.getStartTime(),
+                             task.getDuration().toMinutes(), task.getEndTime());
     }
 
     Task fromString(String value) {

@@ -11,9 +11,9 @@ class InMemoryTaskManager implements TasksManager {
     private final Map<Integer, Task> tasks;
     private final Map<Integer, Subtask> subtasks;
     private final Map<Integer, Epic> epicTasks;
-    private int counter = 0;
     private final HistoryManager historyManager;
     private final Set<Task> prioritizedTasks;
+    private int counter = 0;
 
 
     public InMemoryTaskManager(HistoryManager historyManager) {

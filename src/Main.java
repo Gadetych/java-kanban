@@ -19,16 +19,16 @@ public class Main {
         task1 = tasksManager.createTask(task1);
         task2 = tasksManager.createTask(task2);
         epic1 = tasksManager.createEpicTask(epic1);
-        Subtask subtask1 = new Subtask("Подзадача1", "описание1", epic1.getId()
-                , LocalDateTime.now(), Duration.ofMinutes(60));
-        Subtask subtask2 = new Subtask("Подзадача2", "описание2", epic1.getId()
-                , LocalDateTime.now(), Duration.ofMinutes(45));
+        Subtask subtask1 = new Subtask("Подзадача1", "описание1", epic1.getId(), LocalDateTime.now(),
+                                       Duration.ofMinutes(60));
+        Subtask subtask2 = new Subtask("Подзадача2", "описание2", epic1.getId(), LocalDateTime.now(),
+                                       Duration.ofMinutes(45));
         subtask1 = tasksManager.createSubtask(subtask1);
         subtask2 = tasksManager.createSubtask(subtask2);
         Epic epic2 = new Epic("Эпик2", "описание2");
         epic2 = tasksManager.createEpicTask(epic2);
-        Subtask subtask21 = new Subtask("Подзадача21", "описание21", epic2.getId()
-                , LocalDateTime.now(), Duration.ofMinutes(25));
+        Subtask subtask21 = new Subtask("Подзадача21", "описание21", epic2.getId(), LocalDateTime.now(),
+                                        Duration.ofMinutes(25));
         subtask21 = tasksManager.createSubtask(subtask21);
         epic1.addSubtask(subtask1);
         epic1.addSubtask(subtask2);
@@ -50,7 +50,8 @@ public class Main {
         System.out.println(tasksManager.getEpicSubtasks(epic2.getId()));
         System.out.println();
 
-        System.out.println("Изменяем статусы задач и подзадач. Проверяем корректность изменений. Проверяем изменения статуса эпиков.");
+        System.out.println(
+                "Изменяем статусы задач и подзадач. Проверяем корректность изменений. Проверяем изменения статуса эпиков.");
         task1.setStatus(TaskStatus.IN_PROGRESS);
         task2.setStatus(TaskStatus.DONE);
         subtask1.setStatus(TaskStatus.DONE);

@@ -88,9 +88,12 @@ class FileBackedTaskManagerTest {
         FileBackedTaskManager fileBackedTaskManager = FileBackedTaskManager.loadFromFile(path);
 
         assertEquals(fileBackedTaskManager.getTasks(), tasksManager.getTasks(), "Списки задач не восстановились");
-        assertEquals(fileBackedTaskManager.getEpicTasks(), tasksManager.getEpicTasks(), "Списки эпиков не восстановились");
-        assertEquals(fileBackedTaskManager.getSubtasks(), tasksManager.getSubtasks(), "Списки подзадач не восстановились");
-        assertEquals(fileBackedTaskManager.getHistoryManager().getHistory(), tasksManager.getHistoryManager().getHistory(), "История не восстановились");
+        assertEquals(fileBackedTaskManager.getEpicTasks(), tasksManager.getEpicTasks(),
+                     "Списки эпиков не восстановились");
+        assertEquals(fileBackedTaskManager.getSubtasks(), tasksManager.getSubtasks(),
+                     "Списки подзадач не восстановились");
+        assertEquals(fileBackedTaskManager.getHistoryManager().getHistory(),
+                     tasksManager.getHistoryManager().getHistory(), "История не восстановились");
         assertTrue(fileBackedTaskManager.getCounter() >= tasksManager.getCounter(), "Счетчик id должен продолжаться");
     }
 }

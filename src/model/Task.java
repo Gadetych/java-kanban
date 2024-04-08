@@ -32,16 +32,16 @@ public class Task {
         return title;
     }
 
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
     public TaskType getType() {
         return TaskType.TASK;
     }
 
     public Integer getIdEpic() {
         return null;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public String getDescription() {
@@ -98,10 +98,12 @@ public class Task {
         if (o == null || getClass() != o.getClass()) return false;
         Task task = (Task) o;
         if (startTime != null && duration != null) {
-            return id == task.id && title.equals(task.title) && description.equals(task.description) && status == task.status
+            return id == task.id && title.equals(task.title) && description.equals(
+                    task.description) && status == task.status
                     && startTime.equals(task.startTime) && duration.equals(task.duration);
         } else {
-            return id == task.id && title.equals(task.title) && description.equals(task.description) && status == task.status;
+            return id == task.id && title.equals(task.title) && description.equals(
+                    task.description) && status == task.status;
         }
     }
 
