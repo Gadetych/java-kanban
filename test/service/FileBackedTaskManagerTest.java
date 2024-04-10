@@ -9,6 +9,9 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.Arrays;
 import java.util.List;
 
@@ -30,9 +33,11 @@ class FileBackedTaskManagerTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        task = tasksManager.createTask(new Task("title", "description"));
+        task = tasksManager.createTask(new Task("title", "description"
+                , LocalDateTime.of(2024, Month.APRIL, 4, 12, 0), Duration.ofMinutes(15)));
         epic = tasksManager.createEpicTask(new Epic("e title", "e description"));
-        subtask = tasksManager.createSubtask(new Subtask("s title", "s description", epic.getId()));
+        subtask = tasksManager.createSubtask(new Subtask("s title", "s description", epic.getId()
+                , LocalDateTime.of(2024, Month.APRIL, 4, 14, 0), Duration.ofMinutes(20)));
     }
 
 
@@ -62,14 +67,14 @@ class FileBackedTaskManagerTest {
     @Test
     void shouldTaskToString() {
         String actual = tasksManager.toString(task);
-        String expected = "1,TASK,title,NEW,description,null\n";
+        String expected = "1,TASK,title,NEW,description,null,2024-04-04T12:00,15,2024-04-04T12:15\n";
 
         assertEquals(expected, actual, "Конвертация задачи в строку не работает");
     }
 
     @Test
     void shouldTaskFromString() {
-        Task actual = tasksManager.fromString("1,TASK,title,NEW,description,null\n");
+        Task actual = tasksManager.fromString("1,TASK,title,NEW,description,null,2024-04-04T12:00,15,2024-04-04T12:15");
         Task expected = task;
 
         assertEquals(expected, actual, "Конвертация задачи из строки не работает");
@@ -83,9 +88,12 @@ class FileBackedTaskManagerTest {
         FileBackedTaskManager fileBackedTaskManager = FileBackedTaskManager.loadFromFile(path);
 
         assertEquals(fileBackedTaskManager.getTasks(), tasksManager.getTasks(), "Списки задач не восстановились");
-        assertEquals(fileBackedTaskManager.getEpicTasks(), tasksManager.getEpicTasks(), "Списки эпиков не восстановились");
-        assertEquals(fileBackedTaskManager.getSubtasks(), tasksManager.getSubtasks(), "Списки подзадач не восстановились");
-        assertEquals(fileBackedTaskManager.getHistoryManager().getHistory(), tasksManager.getHistoryManager().getHistory(), "История не восстановились");
+        assertEquals(fileBackedTaskManager.getEpicTasks(), tasksManager.getEpicTasks(),
+                     "Списки эпиков не восстановились");
+        assertEquals(fileBackedTaskManager.getSubtasks(), tasksManager.getSubtasks(),
+                     "Списки подзадач не восстановились");
+        assertEquals(fileBackedTaskManager.getHistoryManager().getHistory(),
+                     tasksManager.getHistoryManager().getHistory(), "История не восстановились");
         assertTrue(fileBackedTaskManager.getCounter() >= tasksManager.getCounter(), "Счетчик id должен продолжаться");
     }
 }

@@ -3,6 +3,10 @@ package model;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.Month;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
@@ -16,8 +20,10 @@ class SubtaskTest {
     void creatTasks() {
         epic1 = new Epic("title", "description");
         epic2 = new Epic("title", "description");
-        subtask1 = new Subtask("title", "description", epic1.getId());
-        subtask2 = new Subtask("title", "description", epic2.getId());
+        subtask1 = new Subtask("title", "description", epic1.getId(), LocalDateTime.of(2024, Month.APRIL, 4, 11, 0),
+                               Duration.ofMinutes(20));
+        subtask2 = new Subtask("title", "description", epic2.getId(), LocalDateTime.of(2024, Month.APRIL, 4, 11, 0),
+                               Duration.ofMinutes(20));
     }
 
     @Test

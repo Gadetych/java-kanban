@@ -12,18 +12,6 @@ class InMemoryHistoryManager implements HistoryManager {
     private Node first;
     private Node last;
 
-    private static class Node {
-        Task task;
-        Node next;
-        Node prev;
-
-        public Node(Node prev, Task task, Node next) {
-            this.task = task;
-            this.next = next;
-            this.prev = prev;
-        }
-    }
-
     public InMemoryHistoryManager() {
         this.history = new HashMap<>();
     }
@@ -89,6 +77,18 @@ class InMemoryHistoryManager implements HistoryManager {
         Node node = history.get(id);
         removeNode(node);
         history.remove(id);
+    }
+
+    private static class Node {
+        Task task;
+        Node next;
+        Node prev;
+
+        public Node(Node prev, Task task, Node next) {
+            this.task = task;
+            this.next = next;
+            this.prev = prev;
+        }
     }
 
 }

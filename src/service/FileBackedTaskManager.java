@@ -1,11 +1,14 @@
 package service;
 
 import exeption.ManagerSaveException;
+import exeption.NotFoundException;
 import model.*;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,9 +22,36 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         this.path = path;
     }
 
+    static FileBackedTaskManager loadFromFile(Path path) {
+        FileBackedTaskManager manager = new FileBackedTaskManager(Managers.getDefaultHistory(), path);
+        manager.loadFromFile();
+        return manager;
+    }
+
+    static String historyToString(HistoryManager manager) {
+        List<Task> history = manager.getHistory();
+        StringBuilder result = new StringBuilder();
+        for (Task task : history) {
+            result.append(task.getId()).append(",");
+        }
+        if (result.length() > 0) {
+            result.deleteCharAt(result.length() - 1);
+        }
+        return result.toString();
+    }
+
+    static List<Integer> historyFromString(String value) {
+        String[] ids = value.split(",");
+        List<Integer> list = new ArrayList<>();
+        for (String s : ids) {
+            list.add(Integer.valueOf(s));
+        }
+        return list;
+    }
+
     private void save() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(path.toFile(), StandardCharsets.UTF_8))) {
-            writer.write("id,type,name,status,description,epic\n");
+            writer.write("id,type,name,status,description,epic,startTime,duration,endTime\n");
             for (Task task : this.getTasks().values()) {
                 writer.write(toString(task));
             }
@@ -34,14 +64,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             writer.newLine();
             writer.write(historyToString(getHistoryManager()));
         } catch (IOException e) {
-            throw new ManagerSaveException(e);
+            throw new ManagerSaveException("Ошибка сериализации данных в файл", e);
         }
-    }
-
-    static FileBackedTaskManager loadFromFile(Path path) {
-        FileBackedTaskManager manager = new FileBackedTaskManager(Managers.getDefaultHistory(), path);
-        manager.loadFromFile();
-        return manager;
     }
 
     private void loadFromFile() {
@@ -59,15 +83,9 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                     maxId = id;
                 }
                 switch (task.getType()) {
-                    case TASK:
-                        tasks.put(id, task);
-                        break;
-                    case SUBTASK:
-                        subtasks.put(id, (Subtask) task);
-                        break;
-                    case EPIC:
-                        epics.put(id, (Epic) task);
-                        break;
+                    case TASK -> tasks.put(id, task);
+                    case SUBTASK -> subtasks.put(id, (Subtask) task);
+                    case EPIC -> epics.put(id, (Epic) task);
                 }
                 line = reader.readLine();
             }
@@ -97,62 +115,52 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 }
             }
         } catch (IOException e) {
-            throw new ManagerSaveException(e);
+            throw new ManagerSaveException("Ошибка десериализации данных из файла", e);
         }
-    }
-
-    static String historyToString(HistoryManager manager) {
-        List<Task> history = manager.getHistory();
-        StringBuilder result = new StringBuilder();
-        for (Task task : history) {
-            result.append(task.getId()).append(",");
-        }
-        if (result.length() > 0) {
-            result.deleteCharAt(result.length() - 1);
-        }
-        return result.toString();
-    }
-
-    static List<Integer> historyFromString(String value) {
-        String[] ids = value.split(",");
-        List<Integer> list = new ArrayList<>();
-        for (String s : ids) {
-            list.add(Integer.valueOf(s));
-        }
-        return list;
     }
 
     String toString(Task task) {
-        return String.format("%s,%s,%s,%s,%s,%s\n", task.getId(), task.getType(), task.getTitle(),
-                task.getStatus(), task.getDescription(), task.getIdEpic());
+        return String.format("%s,%s,%s,%s,%s,%s,%s,%s,%s\n", task.getId(), task.getType(), task.getTitle(),
+                             task.getStatus(), task.getDescription(), task.getIdEpic(), task.getStartTime(),
+                             task.getDuration().toMinutes(), task.getEndTime());
     }
 
     Task fromString(String value) {
         String[] array = value.split(",");
-        String id = array[FileType.ID.ordinal()];
+        int id = Integer.parseInt(array[FileType.ID.ordinal()]);
         String type = array[FileType.TYPE.ordinal()];
         String titleName = array[FileType.NAME.ordinal()];
-        String status = array[FileType.STATUS.ordinal()];
+        TaskStatus status = TaskStatus.valueOf(array[FileType.STATUS.ordinal()]);
         String description = array[FileType.DESCRIPTION.ordinal()];
         String epicId = array[FileType.EPIC_ID.ordinal()];
+        LocalDateTime startTime = LocalDateTime.parse(array[FileType.START_TIME.ordinal()]);
+        Duration duration = Duration.ofMinutes(Long.parseLong(array[FileType.DURATION.ordinal()]));
+        String end = array[FileType.END_TIME.ordinal()];
+        LocalDateTime endTime = LocalDateTime.parse(end);
         switch (TaskType.valueOf(type)) {
-            case TASK:
-                Task task = new Task(titleName, description);
-                task.setId(Integer.parseInt(id));
-                task.setStatus(TaskStatus.valueOf(status));
+            case TASK -> {
+                Task task = new Task(titleName, description, startTime, duration);
+                task.setId(id);
+                task.setStatus(status);
                 return task;
-            case EPIC:
-                Task epic = new Epic(titleName, description);
-                epic.setId(Integer.parseInt(id));
-                epic.setStatus(TaskStatus.valueOf(status));
+            }
+            case EPIC -> {
+                Epic epic = new Epic(titleName, description);
+                epic.setId(id);
+                epic.setStatus(status);
+                epic.setStartTime(startTime);
+                epic.setDuration(duration);
+                epic.setEndTime(endTime);
                 return epic;
-            case SUBTASK:
-                Task subtask = new Subtask(titleName, description, Integer.parseInt(epicId));
-                subtask.setId(Integer.parseInt(id));
-                subtask.setStatus(TaskStatus.valueOf(status));
+            }
+            case SUBTASK -> {
+                Subtask subtask = new Subtask(titleName, description, Integer.parseInt(epicId), startTime, duration);
+                subtask.setId(id);
+                subtask.setStatus(status);
                 return subtask;
+            }
+            default -> throw new NotFoundException("Тип задачи не найден.");
         }
-        return null;
     }
 
     @Override
