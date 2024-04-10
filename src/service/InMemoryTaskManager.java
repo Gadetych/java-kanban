@@ -181,20 +181,6 @@ class InMemoryTaskManager implements TasksManager {
             throw new ValidationException("Задача равна null");
         }
         return epicTask;
-//
-//        Epic originalEpicTask;
-//        originalEpicTask = epicTasks.get(epicTask.getId());
-//        originalEpicTask.setTitle(epicTask.getTitle());
-//        originalEpicTask.setDescription(epicTask.getDescription());
-//        originalEpicTask.setSubtasksId(epicTask.getSubtasksId());
-//        updateEpicStatus(originalEpicTask);
-//        updateEpicTime(originalEpicTask);
-//        if (isValid(originalEpicTask)) {
-//            addPrioritizedTasks(originalEpicTask);
-//            return originalEpicTask;
-//        } else {
-//            throw new ValidationException("Задача пересекается по времени с уже существующей");
-//        }
     }
 
     private void updateEpicTime(Epic epic) {
