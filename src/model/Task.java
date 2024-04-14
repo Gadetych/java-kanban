@@ -1,5 +1,8 @@
 package model;
 
+import model.type.TaskStatus;
+import model.type.TaskType;
+
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -10,7 +13,7 @@ public class Task {
     private String description;
     private TaskStatus status;
     private LocalDateTime startTime;
-    private Duration duration; //продолжительность в минутах
+    private Duration duration;
 
 
     public Task(String title, String description) {

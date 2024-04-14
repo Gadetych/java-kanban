@@ -1,5 +1,7 @@
 package model;
 
+import model.type.TaskType;
+
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Objects;
