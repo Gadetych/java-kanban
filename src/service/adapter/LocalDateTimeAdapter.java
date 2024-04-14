@@ -10,6 +10,10 @@ import java.time.LocalDateTime;
 public class LocalDateTimeAdapter extends TypeAdapter<LocalDateTime> {
     @Override
     public void write(JsonWriter jsonWriter, LocalDateTime localDateTime) throws IOException {
+        if (localDateTime == null) {
+            jsonWriter.value((String) null);
+            return;
+        }
         jsonWriter.value(localDateTime.toString());
     }
 

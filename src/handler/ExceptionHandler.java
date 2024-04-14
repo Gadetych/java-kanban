@@ -60,7 +60,12 @@ public class ExceptionHandler {
     private void writeResponse(HttpExchange exchange, int rCode, String response) throws IOException {
         try (OutputStream outputStream = exchange.getResponseBody()) {
             exchange.sendResponseHeaders(rCode, 0);
-            outputStream.write(response.getBytes());
+            byte[] resp = response.getBytes(TasksHandler.CHARSET);
+            outputStream.write(resp);
         }
+    }
+
+    public Gson getGson() {
+        return gson;
     }
 }

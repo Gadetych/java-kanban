@@ -5,7 +5,7 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import exeption.EndpointException;
 import exeption.NotFoundException;
-import model.Task;
+import model.Epic;
 import model.type.EndpointType;
 import service.TasksManager;
 
@@ -18,13 +18,13 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TasksHandler implements HttpHandler {
+public class EpicsHandler implements HttpHandler {
     private final TasksManager tasksManager;
     private final Gson gson;
     public static final Charset CHARSET = StandardCharsets.UTF_8;
     private final ExceptionHandler exceptionHandler;
 
-    public TasksHandler(TasksManager tasksManager, Gson gson, ExceptionHandler exceptionHandler) {
+    public EpicsHandler(TasksManager tasksManager, Gson gson, ExceptionHandler exceptionHandler) {
         this.tasksManager = tasksManager;
         this.gson = gson;
         this.exceptionHandler = exceptionHandler;
@@ -40,10 +40,10 @@ public class TasksHandler implements HttpHandler {
 
                 EndpointType endpointType = getEndpoint(requestPath, method);
                 switch (endpointType) {
-                    case GET -> handleGetTasks(exchange);
-                    case GET_ID -> handleGetTask(exchange, requestPath);
+                    case GET -> handleGetEpics(exchange);
+                    case GET_ID -> handleGetEpic(exchange, requestPath);
+                    case GET_ID_EPIC_SUB -> handleGetEpicSub(exchange, requestPath);
                     case POST_CREATE -> handlePostCreate(exchange);
-                    case POST_UPDATE -> handlePostUpdate(exchange);
                     case DELETE_ID -> handleDelete(exchange, requestPath);
                     case DELETE_ALL -> handleDeleteAll(exchange);
                     default -> throw new EndpointException("Неизвестный эндпоинт");
@@ -55,60 +55,69 @@ public class TasksHandler implements HttpHandler {
         }
     }
 
-    private void handleGetTasks(HttpExchange exchange) throws IOException {
-        List<Task> tasks = new ArrayList<>(tasksManager.getTasks().values());
+    private void handleGetEpics(HttpExchange exchange) throws IOException {
+        List<Epic> epics = new ArrayList<>(tasksManager.getEpicTasks().values());
         int rCode = 200;
-        String response = gson.toJson(tasks);
+        String response = gson.toJson(epics);
         writeResponse(exchange, rCode, response);
     }
 
-    private void handleGetTask(HttpExchange exchange, String requestPath) throws IOException {
-        String strId = requestPath.substring(7);
+    private void handleGetEpic(HttpExchange exchange, String requestPath) throws IOException {
+        String str = "/epics/";
+        int begin = str.length();
+        String strId = requestPath.substring(begin);
         int id = Integer.parseInt(strId);
-        Task task = tasksManager.getTask(id);
-        if (task == null) {
+        Epic epic = tasksManager.getEpicTask(id);
+        if (epic == null) {
             throw new NotFoundException("Not Found");
         }
         int rCode = 200;
-        String response = gson.toJson(task);
+        String response = gson.toJson(epic);
+        writeResponse(exchange, rCode, response);
+    }
+
+    private void handleGetEpicSub(HttpExchange exchange, String requestPath) throws IOException {
+        String str = "/epics/";
+        int begin = str.length();
+        int end = requestPath.indexOf("/subtasks");
+        String strId = requestPath.substring(begin, end);
+        int id = Integer.parseInt(strId);
+        Epic epic = tasksManager.getEpicTask(id);
+        if (epic == null) {
+            throw new NotFoundException("Not Found");
+        }
+        List<Integer> idSubtasks = epic.getSubtasksId();
+        int rCode = 200;
+        String response = gson.toJson(idSubtasks);
         writeResponse(exchange, rCode, response);
     }
 
     private void handlePostCreate(HttpExchange exchange) throws IOException {
         try (InputStream inputStream = exchange.getRequestBody()) {
             String requestBody = new String(inputStream.readAllBytes(), CHARSET);
-            Task task = gson.fromJson(requestBody, Task.class);
-            task = tasksManager.createTask(task);
+            Epic epic = gson.fromJson(requestBody, Epic.class);
+            epic = tasksManager.createEpicTask(epic);
             int rCode = 200;
-            String response = gson.toJson(task);
-            writeResponse(exchange, rCode, response);
-        }
-    }
-
-    private void handlePostUpdate(HttpExchange exchange) throws IOException {
-        try (InputStream inputStream = exchange.getRequestBody()) {
-            String requestBody = new String(inputStream.readAllBytes(), CHARSET);
-            Task task = gson.fromJson(requestBody, Task.class);
-            task = tasksManager.updateTask(task);
-            int rCode = 200;
-            String response = gson.toJson(task);
+            String response = gson.toJson(epic);
             writeResponse(exchange, rCode, response);
         }
     }
 
     private void handleDelete(HttpExchange exchange, String requestPath) throws IOException {
-        String strId = requestPath.substring(7);
+        String str = "/epics/";
+        int begin = str.length();
+        String strId = requestPath.substring(begin);
         int id = Integer.parseInt(strId);
-        tasksManager.removeTask(id);
+        tasksManager.removeEpicTask(id);
         int rCode = 200;
-        String response = "Задача удалена";
+        String response = "Эпик удален";
         writeResponse(exchange, rCode, response);
     }
 
     private void handleDeleteAll(HttpExchange exchange) throws IOException {
-        tasksManager.clearTasks();
+        tasksManager.clearEpicTasks();
         int rCode = 200;
-        String response = "Задача удалена";
+        String response = "Эпики удалены";
         writeResponse(exchange, rCode, response);
     }
 
@@ -128,11 +137,11 @@ public class TasksHandler implements HttpHandler {
         if (pathParts.length == 3 && method.equals("GET")) {
             return EndpointType.GET_ID;
         }
+        if (pathParts.length == 4 && method.equals("GET")) {
+            return EndpointType.GET_ID_EPIC_SUB;
+        }
         if (pathParts.length == 2 && method.equals("POST")) {
             return EndpointType.POST_CREATE;
-        }
-        if (pathParts.length == 3 && method.equals("POST")) {
-            return EndpointType.POST_UPDATE;
         }
         if (pathParts.length == 3 && method.equals("DELETE")) {
             return EndpointType.DELETE_ID;

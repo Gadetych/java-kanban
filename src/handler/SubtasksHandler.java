@@ -5,7 +5,8 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import exeption.EndpointException;
 import exeption.NotFoundException;
-import model.Task;
+import model.Epic;
+import model.Subtask;
 import model.type.EndpointType;
 import service.TasksManager;
 
@@ -18,13 +19,13 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TasksHandler implements HttpHandler {
+public class SubtasksHandler implements HttpHandler {
     private final TasksManager tasksManager;
     private final Gson gson;
     public static final Charset CHARSET = StandardCharsets.UTF_8;
     private final ExceptionHandler exceptionHandler;
 
-    public TasksHandler(TasksManager tasksManager, Gson gson, ExceptionHandler exceptionHandler) {
+    public SubtasksHandler(TasksManager tasksManager, Gson gson, ExceptionHandler exceptionHandler) {
         this.tasksManager = tasksManager;
         this.gson = gson;
         this.exceptionHandler = exceptionHandler;
@@ -40,8 +41,8 @@ public class TasksHandler implements HttpHandler {
 
                 EndpointType endpointType = getEndpoint(requestPath, method);
                 switch (endpointType) {
-                    case GET -> handleGetTasks(exchange);
-                    case GET_ID -> handleGetTask(exchange, requestPath);
+                    case GET -> handleGetSubtasks(exchange);
+                    case GET_ID -> handleGetSubtask(exchange, requestPath);
                     case POST_CREATE -> handlePostCreate(exchange);
                     case POST_UPDATE -> handlePostUpdate(exchange);
                     case DELETE_ID -> handleDelete(exchange, requestPath);
@@ -55,32 +56,50 @@ public class TasksHandler implements HttpHandler {
         }
     }
 
-    private void handleGetTasks(HttpExchange exchange) throws IOException {
-        List<Task> tasks = new ArrayList<>(tasksManager.getTasks().values());
+    private void handleGetSubtasks(HttpExchange exchange) throws IOException {
+        List<Subtask> subtasks = new ArrayList<>(tasksManager.getSubtasks().values());
         int rCode = 200;
-        String response = gson.toJson(tasks);
+        String response = gson.toJson(subtasks);
         writeResponse(exchange, rCode, response);
     }
 
-    private void handleGetTask(HttpExchange exchange, String requestPath) throws IOException {
-        String strId = requestPath.substring(7);
+    private void handleGetSubtask(HttpExchange exchange, String requestPath) throws IOException {
+        String str = "/subtasks/";
+        int begin = str.length();
+        String strId = requestPath.substring(begin);
         int id = Integer.parseInt(strId);
-        Task task = tasksManager.getTask(id);
-        if (task == null) {
+        Subtask subtask = tasksManager.getSubtask(id);
+        if (subtask == null) {
             throw new NotFoundException("Not Found");
         }
         int rCode = 200;
-        String response = gson.toJson(task);
+        String response = gson.toJson(subtask);
+        writeResponse(exchange, rCode, response);
+    }
+
+    private void handleGetEpicSub(HttpExchange exchange, String requestPath) throws IOException {
+        String str = "/epics/";
+        int begin = str.length();
+        int end = requestPath.indexOf("/subtasks");
+        String strId = requestPath.substring(begin, end);
+        int id = Integer.parseInt(strId);
+        Epic epic = tasksManager.getEpicTask(id);
+        if (epic == null) {
+            throw new NotFoundException("Not Found");
+        }
+        List<Integer> idSubtasks = epic.getSubtasksId();
+        int rCode = 200;
+        String response = gson.toJson(idSubtasks);
         writeResponse(exchange, rCode, response);
     }
 
     private void handlePostCreate(HttpExchange exchange) throws IOException {
         try (InputStream inputStream = exchange.getRequestBody()) {
             String requestBody = new String(inputStream.readAllBytes(), CHARSET);
-            Task task = gson.fromJson(requestBody, Task.class);
-            task = tasksManager.createTask(task);
+            Subtask subtask = gson.fromJson(requestBody, Subtask.class);
+            subtask = tasksManager.createSubtask(subtask);
             int rCode = 200;
-            String response = gson.toJson(task);
+            String response = gson.toJson(subtask);
             writeResponse(exchange, rCode, response);
         }
     }
@@ -88,27 +107,29 @@ public class TasksHandler implements HttpHandler {
     private void handlePostUpdate(HttpExchange exchange) throws IOException {
         try (InputStream inputStream = exchange.getRequestBody()) {
             String requestBody = new String(inputStream.readAllBytes(), CHARSET);
-            Task task = gson.fromJson(requestBody, Task.class);
-            task = tasksManager.updateTask(task);
+            Subtask subtask = gson.fromJson(requestBody, Subtask.class);
+            subtask = tasksManager.updateSubtask(subtask);
             int rCode = 200;
-            String response = gson.toJson(task);
+            String response = gson.toJson(subtask);
             writeResponse(exchange, rCode, response);
         }
     }
 
     private void handleDelete(HttpExchange exchange, String requestPath) throws IOException {
-        String strId = requestPath.substring(7);
+        String str = "/subtasks/";
+        int begin = str.length();
+        String strId = requestPath.substring(begin);
         int id = Integer.parseInt(strId);
-        tasksManager.removeTask(id);
+        tasksManager.removeSubtask(id);
         int rCode = 200;
-        String response = "Задача удалена";
+        String response = "Подзадача удалена";
         writeResponse(exchange, rCode, response);
     }
 
     private void handleDeleteAll(HttpExchange exchange) throws IOException {
-        tasksManager.clearTasks();
+        tasksManager.clearSubtasks();
         int rCode = 200;
-        String response = "Задача удалена";
+        String response = "Подзадачи удалены";
         writeResponse(exchange, rCode, response);
     }
 
