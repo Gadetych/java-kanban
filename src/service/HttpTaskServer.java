@@ -4,8 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.sun.net.httpserver.HttpServer;
 import handler.*;
-import model.Epic;
-import model.Subtask;
 import service.adapter.DurationAdapter;
 import service.adapter.LocalDateTimeAdapter;
 
@@ -13,7 +11,6 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.Month;
 
 public class HttpTaskServer {
     private final HttpServer server;
@@ -32,17 +29,11 @@ public class HttpTaskServer {
                     .create();
             exceptionHandler = new ExceptionHandler(gson);
 
-            Epic epic = new Epic("title", "description");
-            tasksManager.createEpicTask(epic);
-            Subtask subtask = new Subtask("title", "description", epic.getId(),
-                                          LocalDateTime.of(2024, Month.APRIL, 4, 11, 0),
-                                          Duration.ofMinutes(20));
-            tasksManager.createSubtask(subtask);
-
             server.createContext("/tasks", new TasksHandler(tasksManager, gson, exceptionHandler));
             server.createContext("/epics", new EpicsHandler(tasksManager, gson, exceptionHandler));
             server.createContext("/subtasks", new SubtasksHandler(tasksManager, gson, exceptionHandler));
             server.createContext("/history", new HistoryHandler(tasksManager, gson, exceptionHandler));
+            server.createContext("/prioritized", new PrioritizedHandler(tasksManager, gson, exceptionHandler));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
