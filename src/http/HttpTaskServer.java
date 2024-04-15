@@ -6,7 +6,6 @@ import com.sun.net.httpserver.HttpServer;
 import http.adapter.DurationAdapter;
 import http.adapter.LocalDateTimeAdapter;
 import http.handler.*;
-import service.Managers;
 import service.TasksManager;
 
 import java.io.IOException;
@@ -24,10 +23,10 @@ public class HttpTaskServer {
             .create();
     private final ExceptionHandler exceptionHandler;
 
-    public HttpTaskServer() {
+    public HttpTaskServer(TasksManager tasksManager) {
         try {
             server = HttpServer.create(new InetSocketAddress(PORT), 0);
-            tasksManager = Managers.getDefault();
+            this.tasksManager = tasksManager;
             exceptionHandler = new ExceptionHandler(gson);
 
             server.createContext("/tasks", new TasksHandler(tasksManager, exceptionHandler));
