@@ -18,31 +18,30 @@ public class HttpTaskServer {
     private final HttpServer server;
     public static final int PORT = 8080;
     private final TasksManager tasksManager;
-    private final Gson gson;
+    private static final Gson gson = new GsonBuilder()
+            .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+            .registerTypeAdapter(Duration.class, new DurationAdapter())
+            .create();
     private final ExceptionHandler exceptionHandler;
 
     public HttpTaskServer() {
         try {
             server = HttpServer.create(new InetSocketAddress(PORT), 0);
             tasksManager = Managers.getDefault();
-            gson = new GsonBuilder()
-                    .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
-                    .registerTypeAdapter(Duration.class, new DurationAdapter())
-                    .create();
             exceptionHandler = new ExceptionHandler(gson);
 
-            server.createContext("/tasks", new TasksHandler(tasksManager, gson, exceptionHandler));
-            server.createContext("/epics", new EpicsHandler(tasksManager, gson, exceptionHandler));
-            server.createContext("/subtasks", new SubtasksHandler(tasksManager, gson, exceptionHandler));
-            server.createContext("/history", new HistoryHandler(tasksManager, gson, exceptionHandler));
-            server.createContext("/prioritized", new PrioritizedHandler(tasksManager, gson, exceptionHandler));
+            server.createContext("/tasks", new TasksHandler(tasksManager, exceptionHandler));
+            server.createContext("/epics", new EpicsHandler(tasksManager, exceptionHandler));
+            server.createContext("/subtasks", new SubtasksHandler(tasksManager, exceptionHandler));
+            server.createContext("/history", new HistoryHandler(tasksManager, exceptionHandler));
+            server.createContext("/prioritized", new PrioritizedHandler(tasksManager, exceptionHandler));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     public void start() {
-        System.out.println("Сервер запущен");
+        System.out.println("Сервер запущен. Порт: " + PORT);
         server.start();
     }
 
@@ -59,7 +58,7 @@ public class HttpTaskServer {
         return tasksManager;
     }
 
-    public Gson getGson() {
+    public static Gson getGson() {
         return gson;
     }
 

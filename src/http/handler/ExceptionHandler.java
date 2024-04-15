@@ -8,6 +8,7 @@ import exeption.ValidationException;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 
 public class ExceptionHandler {
     private final Gson gson;
@@ -60,7 +61,7 @@ public class ExceptionHandler {
     private void writeResponse(HttpExchange exchange, int rCode, String response) throws IOException {
         try (OutputStream outputStream = exchange.getResponseBody()) {
             exchange.sendResponseHeaders(rCode, 0);
-            byte[] resp = response.getBytes(TasksHandler.CHARSET);
+            byte[] resp = response.getBytes(StandardCharsets.UTF_8);
             outputStream.write(resp);
         }
     }
