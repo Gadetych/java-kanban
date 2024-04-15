@@ -1,11 +1,13 @@
-package service;
+package http;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.sun.net.httpserver.HttpServer;
-import handler.*;
-import service.adapter.DurationAdapter;
-import service.adapter.LocalDateTimeAdapter;
+import http.adapter.DurationAdapter;
+import http.adapter.LocalDateTimeAdapter;
+import http.handler.*;
+import service.Managers;
+import service.TasksManager;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
