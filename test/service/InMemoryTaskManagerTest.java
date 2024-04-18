@@ -4,7 +4,7 @@ import exeption.ValidationException;
 import model.Epic;
 import model.Subtask;
 import model.Task;
-import model.TaskStatus;
+import model.type.TaskStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

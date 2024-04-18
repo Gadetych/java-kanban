@@ -1,5 +1,7 @@
 package model;
 
+import model.type.TaskType;
+
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -12,7 +14,6 @@ public class Epic extends Task {
 
     public Epic(String title, String description) {
         super(title, description, null, Duration.ofMinutes(0));
-        this.endTime = LocalDateTime.now();
         this.subtasksId = new ArrayList<>();
     }
 
